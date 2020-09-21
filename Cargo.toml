@@ -1,0 +1,11 @@
+[package]
+name = "nectarine"
+version = "0.1.0"
+authors = ["Chase Wilson <me@chasewilson.dev>"]
+license = "MIT OR Apache-2.0"
+edition = "2018"
+
+[dependencies]
+logos = "0.11.4"
+fxhash = "0.2.1"
+lasso = "0.3.1"

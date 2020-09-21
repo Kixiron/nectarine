@@ -1,0 +1,12 @@
+[book]
+authors = ["Chase Wilson"]
+language = "en"
+multilingual = false
+src = "doc"
+title = "The Nectarine Book"
+
+[build]
+build-dir = "target/book"
+
+[output.html]
+mathjax-support = true

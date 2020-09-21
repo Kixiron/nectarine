@@ -1,0 +1,22 @@
+[config]
+# Set the minimal version of cargo-make
+min_version = "0.32.5"
+
+# The entrypoint setup function
+[tasks.setup]
+condition = { rust_version = { min = "1.48.0" }, channels = ["nightly"], fail_message = "Only Rust nightly verisons 1.48.0 or greater are supported" }
+
+# Run 
+[tasks.serve-doc]
+command = "mdbook"
+args = ["serve", "--open"]
+dependencies = ["install-doc"]
+
+# Install dependencies for building the book
+[tasks.install-doc]
+dependencies = ["install-mdbook"]
+
+# Install mdBook
+[tasks.install-mdbook]
+install_crate = { crate_name = "mdbook", binary = "mdbook", test_arg = ["--version"], min_version = "0.4.3" }
+private = true
