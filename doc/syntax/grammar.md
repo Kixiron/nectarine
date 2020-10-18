@@ -45,7 +45,7 @@ Contract ::= "ensure" Expression
 
 Assignment ::= "let" Pattern ":=" Expression
 
-Application ::= Ident Expression+
+Application ::= Expr Expr
 
 Parentheses ::= "(" Expression ")"
 
@@ -87,7 +87,7 @@ The in-between bits of the language
 ```ebnf
 Ident ::= [a-zA-Z_][a-zA-Z0-9_]*
 
-Path ::= Ident ("." Ident)*
+Path ::= Ident ("." Ident)+
 
 Pattern ::= Literal | Path
 ```

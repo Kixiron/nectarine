@@ -1,16 +1,23 @@
 #![feature(once_cell, min_const_generics)]
 
-mod parse;
+mod ast;
+// mod parse;
 
-use fxhash::FxBuildHasher;
-use lasso::{Rodeo, Spur};
-use parse::Parser;
+use lalrpop_util::lalrpop_mod;
+
+lalrpop_mod!(grammar);
+
+// use parse::Parser;
+
+/*
 use std::{
     fmt::{Debug, Formatter, Result as FmtResult},
     lazy::SyncLazy,
     ops::Deref,
     sync::RwLock,
 };
+use fxhash::FxBuildHasher;
+use lasso::{Rodeo, Spur};
 
 static INTERNER: SyncLazy<RwLock<Rodeo<Spur, FxBuildHasher>>> =
     SyncLazy::new(|| RwLock::new(Rodeo::with_hasher(FxBuildHasher::default())));
@@ -42,14 +49,17 @@ impl Debug for Ident {
         Debug::fmt(self.as_str(), f)
     }
 }
+*/
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[repr(transparent)]
+pub struct Ident(String);
 
 fn main() {
-    let source = "
-        fn main =\n\
-           let x := 5\n\
-           add x 5\n\
-        ";
+    let source = "fn main =\n    let x := 5\n    add x 5\n";
 
-    let parsed = Parser::new(source).parse().unwrap();
-    println!("{:#?}", parsed);
+    dbg!(grammar::ItemParser::new().parse(source));
+
+    // let parsed = Parser::new(source).parse().unwrap();
+    // println!("{:#?}", parsed);
 }

@@ -1,0 +1,79 @@
+use crate::ast::{Item, FuncDef, Ident, Pattern, Type, Expr, Literal, Let, Path, App};
+
+grammar;
+
+pub Item : Item = {
+    FuncDef => Item::Func(<>),
+};
+
+FuncDef : FuncDef =
+    "fn" <name: Ident> <params: (FuncArg)*> <ret: (FuncRet)?> "=" <body: Expr+> =>
+        FuncDef {
+            name,
+            params,
+            ret,
+            body,
+        };
+
+FuncArg : (Pattern, Type) = <pat: Pattern> ":" <ty: Type> => (pat, ty);
+
+FuncRet : Type = "->" <ty: Type> => ty;
+
+Expr : Expr = {
+    InfixExpr,
+    // TODO: match, return, ensure, etc.
+
+    "let" <binding: Pattern> ":=" <value: Expr> =>
+        Expr::Let(Box::new(Let { binding, value })),
+};
+
+InfixExpr : Expr = AppExpr;
+
+AppExpr : Expr = {
+    AtomicExpr,
+    <func: AtomicExpr> <arg: AtomicExpr> => App { func, arg },
+};
+
+AtomicExpr : Expr = {
+    Ident   => Expr::Var(<>),
+    Literal => Expr::Literal(<>),
+};
+
+Literal : Literal = {
+    String => Literal::String(<>),
+    Int    => Literal::Int(<>),
+    Bool   => Literal::Bool(<>),
+};
+
+String : Ident =
+    r#""[^"]""# => Ident(<>[1..<>.len() - 2].to_owned());
+
+Int : i64 =
+    r"[0-9][0-9_]*" => <>.parse::<i64>().expect("invalid Int");
+
+Bool : bool = {
+    "True"  => true,
+    "False" => false,
+};
+
+Type : Type = {
+    Ident => Type::Path(Path::new(vec![<>])),
+    Path  => Type::Path(<>),
+};
+
+Pattern : Pattern = {
+    Literal => Pattern::Literal(<>),
+    Path    => Pattern::Path(<>),
+    Ident   => Pattern::Ident(<>),
+};
+
+Ident : Ident =
+    r"[a-zA-Z_][a-zA-Z0-9_]*" => Ident(<>.to_owned());
+
+Path : Path =
+    <start: Ident> <mut rest: (_Path)+> => {
+        rest.insert(0, start);
+        Path::new(rest)
+    };
+
+_Path : Ident = "." <i: Ident> => i;
