@@ -2,7 +2,11 @@
 pub(crate) mod token;
 
 use crate::Ident;
-use std::{collections::HashMap, fmt::Debug};
+use std::{
+    collections::HashMap,
+    convert::TryFrom,
+    fmt::{Debug, Formatter, Result as FmtResult},
+};
 use token::{Token, TokenKind, TokenStream};
 
 type ParseResult<T> = Result<T, String>;
@@ -36,7 +40,7 @@ impl<'src> Parser<'src> {
     }
 
     pub fn next(&mut self) -> ParseResult<Token<'src>> {
-        let next = self.next;
+        let next = dbg!(self.next);
         self.next = self.peek;
         self.peek = self.token_stream.next();
 
@@ -44,11 +48,11 @@ impl<'src> Parser<'src> {
     }
 
     pub fn current(&mut self) -> ParseResult<Token<'src>> {
-        self.next.ok_or_else(|| "Unexpected EOF".to_owned())
+        dbg!(self.next).ok_or_else(|| "Unexpected EOF".to_owned())
     }
 
     pub fn peek(&self) -> ParseResult<Token<'src>> {
-        self.peek.ok_or_else(|| "Unexpected EOF".to_owned())
+        dbg!(self.peek).ok_or_else(|| "Unexpected EOF".to_owned())
     }
 
     pub fn expect<T>(&mut self, tokens: T) -> ParseResult<Token<'src>>
@@ -73,7 +77,7 @@ impl<'src> Parser<'src> {
 }
 
 // Utils
-impl Parser<'_> {
+impl<'src> Parser<'src> {
     fn ident(&mut self) -> ParseResult<Ident> {
         self.expect(T![Ident])
             .map(|ident| self.intern(ident.source()))
@@ -85,7 +89,7 @@ impl Parser<'_> {
 }
 
 // Items
-impl Parser<'_> {
+impl<'src> Parser<'src> {
     fn item(&mut self) -> ParseResult<Item> {
         Ok(match self.current()?.kind() {
             T![fn] => Item::Func(self.function_def()?),
@@ -174,24 +178,19 @@ impl Parser<'_> {
     }
 
     fn literal(&mut self) -> ParseResult<Literal> {
-        if self.at(T![Int]) {
-            Ok(Literal::Int(
-                self.expect(T![Int])?.source().parse().expect("invalid int"),
-            ))
-        } else if self.at(T![String]) {
-            let source = self.expect(T![String])?.source();
-            Ok(Literal::String(self.intern(&source[1..source.len() - 2])))
-        } else if self.at(T![Bool]) {
-            let boolean = match self.expect(T![Bool])?.kind() {
-                T![True] => true,
-                T![False] => false,
-                _ => unreachable!(),
-            };
-            Ok(Literal::Bool(boolean))
-        } else {
-            // TODO: Good error
-            panic!("Invalid literal");
-        }
+        let token = self.expect(T![Literal])?;
+
+        Ok(match token.kind() {
+            T![Int] => Literal::Int(token.source().parse().expect("invalid int")),
+            T![String] => {
+                let source = token.source();
+                Literal::String(self.intern(&source[1..source.len() - 2]))
+            }
+            T![True] => Literal::Bool(true),
+            T![False] => Literal::Bool(false),
+
+            _ => unreachable!("invalid literal"),
+        })
     }
 
     fn path_or_ident(&mut self) -> ParseResult<PathOrIdent> {
@@ -223,30 +222,83 @@ impl Parser<'_> {
 
     // TODO: Pratt bullshit
     fn expression(&mut self) -> ParseResult<Expr> {
-        Ok(match dbg!(self.current()?.kind()) {
-            T![let] => Expr::Let(Box::new(self.let_binding()?)),
-            T![ensure] => Expr::Ensure(Box::new(self.ensure_contract()?)),
-            // T![match] => Expr::Match(self.match_expr()?),
-            // T![return] => Expr::Return(self.return_expr()?),
-            T![True] | T![False] | T![String] | T![Int] => Expr::Literal(self.literal()?),
-            T![Ident] => Expr::Var(self.ident()?),
-            // T![Ident] => Expr::Application(self.application()?),
-            // T![not] => Expr::Not(self.not_expr()?),
-            // T!['('] => Expr::Parens(self.parens()?),
-            _ => todo!(),
-        })
+        self.expression_inner(0)
     }
 
-    // TODO: Pratt
-    fn precedence(_token: TokenKind) -> usize {
-        todo!()
+    fn expr_precedence(&self) -> usize {
+        self.next
+            .map(|p| {
+                ExprPrecedence::try_from(p.kind())
+                    .map(|p| p.precedence())
+                    .unwrap_or(0)
+            })
+            .unwrap_or(0)
+    }
+
+    fn expression_inner(&mut self, precedence: usize) -> ParseResult<Expr> {
+        let prefix = Self::expr_prefix(self.current()?);
+        if let Some(prefix) = prefix {
+            let mut left = prefix(self)?;
+
+            if let Ok(peek) = self.peek() {
+                let postfix = Self::expr_postfix(peek);
+
+                if let Some(postfix) = postfix {
+                    left = postfix(self, left)?;
+                }
+            }
+
+            while precedence < self.expr_precedence() {
+                let infix = Self::expr_infix(self.current()?);
+                if let Some(infix) = infix {
+                    left = infix(self, left)?;
+                } else {
+                    break;
+                }
+            }
+
+            Ok(left)
+        } else {
+            todo!("invalid expression")
+        }
+    }
+
+    fn expr_prefix(token: Token) -> Option<PrefixParselet<'src>> {
+        let prefix: PrefixParselet<'src> = match token.kind() {
+            T![let] => |parser| Ok(Expr::Let(Box::new(parser.let_binding()?))),
+            kind if T![Literal].contains(kind) => |parser| Ok(Expr::Literal(parser.literal()?)),
+            T![Ident] => |parser| {
+                let ident = parser.expect(T![Ident])?;
+                Ok(Expr::Var(parser.intern(ident.source())))
+            },
+            _ => return None,
+        };
+
+        Some(prefix)
+    }
+
+    fn expr_infix(token: Token<'_>) -> Option<InfixParselet<'src>> {
+        let infix: InfixParselet<'src> = match token.kind() {
+            T![Ident] => |parser, func| Ok(Expr::Application(Box::new(parser.application(func)?))),
+            _ => return None,
+        };
+
+        Some(infix)
+    }
+
+    fn expr_postfix(token: Token) -> Option<PostfixParselet<'src>> {
+        let postfix: PostfixParselet<'src> = match token.kind() {
+            _ => return None,
+        };
+
+        Some(postfix)
     }
 
     fn let_binding(&mut self) -> ParseResult<Let> {
         self.expect(T![let])?;
         let binding = self.pattern()?;
         self.expect(T![:=])?;
-        let value = self.expression()?;
+        let value = self.expression_inner(12)?;
 
         Ok(Let { binding, value })
     }
@@ -258,18 +310,10 @@ impl Parser<'_> {
         Ok(Ensure { contract })
     }
 
-    fn application(&mut self) -> ParseResult<Application> {
-        let function_name = self.ident()?;
-        let mut arguments = Vec::with_capacity(5);
+    fn application(&mut self, func: Expr) -> ParseResult<Application> {
+        let arg = self.expression_inner(12)?;
 
-        while self.current().is_ok() {
-            arguments.push(self.expression()?);
-        }
-
-        Ok(Application {
-            function_name,
-            arguments,
-        })
+        Ok(Application { func, arg })
     }
 }
 
@@ -298,7 +342,7 @@ pub enum Type {
     Path(Path),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub enum Expr {
     Let(Box<Let>),
     Ensure(Box<Ensure>),
@@ -306,9 +350,21 @@ pub enum Expr {
     // Return(Return),
     Literal(Literal),
     Var(Ident),
-    Application(Application),
+    Application(Box<Application>),
     // Not(Not),
     // Parens(Parens),
+}
+
+impl Debug for Expr {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            Self::Let(let_binding) => Debug::fmt(let_binding, f),
+            Self::Ensure(ensure) => Debug::fmt(ensure, f),
+            Self::Literal(literal) => Debug::fmt(literal, f),
+            Self::Var(ident) => f.write_str(&format!("Var({:?})", ident)),
+            Self::Application(app) => Debug::fmt(app, f),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -333,8 +389,8 @@ pub enum Literal {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Application {
-    pub function_name: Ident,
-    pub arguments: Vec<Expr>,
+    pub func: Expr,
+    pub arg: Expr,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -362,11 +418,35 @@ impl Path {
     pub const fn new(segments: Vec<Ident>) -> Self {
         Self { segments }
     }
+}
 
-    pub fn one(segment: Ident) -> Self {
-        Self {
-            segments: vec![segment],
+type PrefixParselet<'src> = fn(&mut Parser<'src>) -> ParseResult<Expr>;
+type PostfixParselet<'src> = fn(&mut Parser<'src>, Expr) -> ParseResult<Expr>;
+type InfixParselet<'src> = fn(&mut Parser<'src>, Expr) -> ParseResult<Expr>;
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum ExprPrecedence {
+    Application,
+}
+
+impl ExprPrecedence {
+    pub fn precedence(self) -> usize {
+        match self {
+            Self::Application => 12,
         }
+    }
+}
+
+impl TryFrom<TokenKind> for ExprPrecedence {
+    type Error = ();
+
+    fn try_from(t: TokenKind) -> Result<ExprPrecedence, ()> {
+        let precedence = match t {
+            T![Ident] => Self::Application,
+            _ => return Err(()),
+        };
+
+        Ok(precedence)
     }
 }
 

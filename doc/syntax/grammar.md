@@ -23,7 +23,6 @@ A expression is any value-returning thing, they make up the bulk of the language
 
 ```ebnf
 Expression ::= AscribedExpression
-               | BinaryOp
                | Comparison
                | Contract
                | Assignment
@@ -34,12 +33,9 @@ Expression ::= AscribedExpression
                | Negated
                | Literal
                | Path
+               | Ident
 
 AscribedExpression ::= Expression ":" Type
-
-BinaryOp ::= Expression BinaryOperand Expression
-
-BinaryOperand ::= "+" | "-" | "*" | "/"
 
 Comparison ::= Expression Comparator Expression
 

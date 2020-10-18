@@ -67,15 +67,6 @@ pub enum TokenKind {
     #[token("<")]
     Less,
 
-    #[token("+")]
-    Plus,
-    #[token("-")]
-    Minus,
-    #[token("*")]
-    Star,
-    #[token("/")]
-    FwdSlash,
-
     #[token(":=")]
     Assign,
     #[token("=")]
