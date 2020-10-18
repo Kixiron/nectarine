@@ -14,7 +14,7 @@ FunctionDef ::= "fn" Ident (Pattern ":" Type)* ("->" Type)? "=" Expression+
 
 Usage ::= "use" Path
 
-Module ::= "module" Item*
+Module ::= "module" Ident "=" Item+
 ```
 
 ## Expressions
@@ -49,11 +49,11 @@ Contract ::= "ensure" Expression
 
 Assignment ::= "let" Pattern ":=" Expression
 
-Application ::= Ident Expression*
+Application ::= Ident Expression+
 
 Parentheses ::= "(" Expression ")"
 
-Match ::= "match" Expression "with" ("|" Pattern "->" Expression ",")+
+Match ::= "match" Expression "with" ("|" Pattern "->" Expression)+
 
 Return ::= "return" Expression
 

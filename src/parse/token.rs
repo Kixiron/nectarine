@@ -1,7 +1,29 @@
-use logos::Logos;
+use logos::{Lexer, Logos};
+use std::{convert::TryInto, fmt, ops::Range};
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct Token<'src> {
+    kind: TokenKind,
+    source: &'src str,
+    span: Span,
+}
+
+impl<'src> Token<'src> {
+    const fn new(kind: TokenKind, source: &'src str, span: Span) -> Self {
+        Self { kind, source, span }
+    }
+
+    pub const fn kind(&self) -> TokenKind {
+        self.kind
+    }
+
+    pub const fn source(&self) -> &'src str {
+        self.source
+    }
+}
 
 #[derive(Logos, Debug, Copy, Clone, PartialEq, Eq)]
-pub enum Token {
+pub enum TokenKind {
     #[token("fn")]
     Fn,
     #[token("use")]
@@ -92,48 +114,106 @@ pub enum Token {
 #[macro_export]
 macro_rules! T {
     (Items)  => { [T![fn], T![use], T![module]] };
-    (fn)     => { $crate::parse::token::Token::Fn };
-    (use)    => { $crate::parse::token::Token::Use };
-    (module) => { $crate::parse::token::Token::Module };
-    (let)    => { $crate::parse::token::Token::Let };
-    (match)  => { $crate::parse::token::Token::Match };
-    (with)   => { $crate::parse::token::Token::With };
-    (ensure) => { $crate::parse::token::Token::Ensure };
-    (not)    => { $crate::parse::token::Token::Not };
-    (return) => { $crate::parse::token::Token::Return };
+    (fn)     => { $crate::parse::token::TokenKind::Fn };
+    (use)    => { $crate::parse::token::TokenKind::Use };
+    (module) => { $crate::parse::token::TokenKind::Module };
+    (let)    => { $crate::parse::token::TokenKind::Let };
+    (match)  => { $crate::parse::token::TokenKind::Match };
+    (with)   => { $crate::parse::token::TokenKind::With };
+    (ensure) => { $crate::parse::token::TokenKind::Ensure };
+    (not)    => { $crate::parse::token::TokenKind::Not };
+    (return) => { $crate::parse::token::TokenKind::Return };
 
-    (Ident) => { $crate::parse::token::Token::Ident };
+    (Ident) => { $crate::parse::token::TokenKind::Ident };
 
     (Comparison) => { [T![==], T![!=], T![>=], T![<=], T![>], T![<]] };
-    (==)         => { $crate::parse::token::Token::Eq };
-    (!=)         => { $crate::parse::token::Token::NotEq };
-    (>=)         => { $crate::parse::token::Token::GreaterEq };
-    (<=)         => { $crate::parse::token::Token::LessEq };
-    (>)          => { $crate::parse::token::Token::Greater };
-    (<)          => { $crate::parse::token::Token::Less };
+    (==)         => { $crate::parse::token::TokenKind::Eq };
+    (!=)         => { $crate::parse::token::TokenKind::NotEq };
+    (>=)         => { $crate::parse::token::TokenKind::GreaterEq };
+    (<=)         => { $crate::parse::token::TokenKind::LessEq };
+    (>)          => { $crate::parse::token::TokenKind::Greater };
+    (<)          => { $crate::parse::token::TokenKind::Less };
 
     (Operation) => { [T![+], T![-], T![*], T![/]] };
-    (+)         => { $crate::parse::token::Token::Plus };
-    (-)         => { $crate::parse::token::Token::Plus };
-    (*)         => { $crate::parse::token::Token::Star };
-    (/)         => { $crate::parse::token::Token::FwdSlash };
+    (+)         => { $crate::parse::token::TokenKind::Plus };
+    (-)         => { $crate::parse::token::TokenKind::Plus };
+    (*)         => { $crate::parse::token::TokenKind::Star };
+    (/)         => { $crate::parse::token::TokenKind::FwdSlash };
 
-    (:=) => { $crate::parse::token::Token::Assign };
-    (=)  => { $crate::parse::token::Token::Equals };
-    (->) => { $crate::parse::token::Token::RArrow };
-    (=>) => { $crate::parse::token::Token::RRocket };
+    (:=) => { $crate::parse::token::TokenKind::Assign };
+    (=)  => { $crate::parse::token::TokenKind::Equals };
+    (->) => { $crate::parse::token::TokenKind::RArrow };
+    (=>) => { $crate::parse::token::TokenKind::RRocket };
 
-    (,)   => { $crate::parse::token::Token::Comma };
-    (:)   => { $crate::parse::token::Token::Colon };
-    (.)   => { $crate::parse::token::Token::Dot };
-    (')') => { $crate::parse::token::Token::LParen };
-    ('(') => { $crate::parse::token::Token::RParen };
-    ('}') => { $crate::parse::token::Token::LBrace };
-    ('{') => { $crate::parse::token::Token::RBrace };
+    (,)   => { $crate::parse::token::TokenKind::Comma };
+    (:)   => { $crate::parse::token::TokenKind::Colon };
+    (.)   => { $crate::parse::token::TokenKind::Dot };
+    (')') => { $crate::parse::token::TokenKind::LParen };
+    ('(') => { $crate::parse::token::TokenKind::RParen };
+    ('}') => { $crate::parse::token::TokenKind::LBrace };
+    ('{') => { $crate::parse::token::TokenKind::RBrace };
 
-    (String) => { $crate::parse::token::Token::String };
-    (Int)    => { $crate::parse::token::Token::Int };
-    (Bool)   => { [T![True], T![False]] };
-    (True)   => { $crate::parse::token::Token::True };
-    (False)  => { $crate::parse::token::Token::False };
+    (Literal) => { [T![String], T![Int], T![True], T![False]] };
+    (String)  => { $crate::parse::token::TokenKind::String };
+    (Int)     => { $crate::parse::token::TokenKind::Int };
+    (Bool)    => { [T![True], T![False]] };
+    (True)    => { $crate::parse::token::TokenKind::True };
+    (False)   => { $crate::parse::token::TokenKind::False };
+}
+
+#[derive(Clone)]
+pub struct TokenStream<'src> {
+    lexer: Lexer<'src, TokenKind>,
+}
+
+impl<'src> TokenStream<'src> {
+    pub fn new(input: &'src str) -> Self {
+        Self {
+            lexer: TokenKind::lexer(input),
+        }
+    }
+}
+
+impl<'src> Iterator for TokenStream<'src> {
+    type Item = Token<'src>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.lexer
+            .next()
+            .map(|token| Token::new(token, self.lexer.slice(), self.lexer.span().into()))
+    }
+}
+
+impl fmt::Debug for TokenStream<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let tokens = self.clone().collect::<Vec<Token<'_>>>();
+
+        f.debug_struct("TokenStream")
+            .field("lexer", &tokens)
+            .finish()
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub struct Span {
+    start: u32,
+    end: u32,
+}
+
+impl From<Range<u32>> for Span {
+    fn from(range: Range<u32>) -> Self {
+        Self {
+            start: range.start,
+            end: range.end,
+        }
+    }
+}
+
+impl From<Range<usize>> for Span {
+    fn from(range: Range<usize>) -> Self {
+        Self {
+            start: range.start.try_into().expect("More than 4gb span"),
+            end: range.end.try_into().expect("More than 4gb span"),
+        }
+    }
 }
