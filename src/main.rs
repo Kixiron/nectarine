@@ -56,7 +56,11 @@ impl Debug for Ident {
 pub struct Ident(String);
 
 fn main() {
-    let source = "fn main =\n    let x := 5\n    add x 5\n";
+    let source = "\
+        fn main =\n    \
+            let x := 5\n    \
+            add x 5\n\
+    ";
 
     dbg!(grammar::ItemParser::new().parse(source));
 

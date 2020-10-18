@@ -7,12 +7,12 @@ pub Item : Item = {
 };
 
 FuncDef : FuncDef =
-    "fn" <name: Ident> <params: (FuncArg)*> <ret: (FuncRet)?> "=" <body: Expr+> =>
+    "fn" <name: Ident> <params: (FuncArg)*> <ret: (FuncRet)?> "=" <body: Expr> =>
         FuncDef {
             name,
             params,
             ret,
-            body,
+            body: vec![body],
         };
 
 FuncArg : (Pattern, Type) = <pat: Pattern> ":" <ty: Type> => (pat, ty);
@@ -31,7 +31,9 @@ InfixExpr : Expr = AppExpr;
 
 AppExpr : Expr = {
     AtomicExpr,
-    <func: AtomicExpr> <arg: AtomicExpr> => App { func, arg },
+
+    <func: AtomicExpr> <args: AtomicExpr+> =>
+        Expr::App(Box::new(App { func, args })),
 };
 
 AtomicExpr : Expr = {

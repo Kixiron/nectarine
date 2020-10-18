@@ -76,7 +76,7 @@ pub enum Literal {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct App {
     pub func: Expr,
-    pub arg: Expr,
+    pub args: Vec<Expr>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
