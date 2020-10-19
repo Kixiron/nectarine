@@ -7,17 +7,13 @@ pub Item : Item = {
 };
 
 FuncDef : FuncDef =
-    "fn" <name: Ident> <params: (FuncArg)*> <ret: (FuncRet)?> "=" <body: Expr> =>
+    "fn" <name: Ident> <params: (<Pattern> ":" <Type>)*> <ret: ("->" <Type>)?> "=" <body: Expr> =>
         FuncDef {
             name,
             params,
             ret,
             body: vec![body],
         };
-
-FuncArg : (Pattern, Type) = <pat: Pattern> ":" <ty: Type> => (pat, ty);
-
-FuncRet : Type = "->" <ty: Type> => ty;
 
 Expr : Expr = {
     InfixExpr,
@@ -73,9 +69,7 @@ Ident : Ident =
     r"[a-zA-Z_][a-zA-Z0-9_]*" => Ident(<>.to_owned());
 
 Path : Path =
-    <start: Ident> <mut rest: (_Path)+> => {
+    <start: Ident> <mut rest: ("." <Ident>)+> => {
         rest.insert(0, start);
         Path::new(rest)
     };
-
-_Path : Ident = "." <i: Ident> => i;
