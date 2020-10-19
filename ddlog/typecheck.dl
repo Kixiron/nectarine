@@ -1,0 +1,79 @@
+import vec
+
+typedef FuncId = u32
+typedef ExprId = u32
+typedef Ident = istring
+
+typedef Type = Bool
+              | Int
+              | String
+              | Unit
+              | Unknown
+              | Func { args: Vec<Type>, ret: Ref<Type> }
+typedef ExprKind = Var { v: Ident } | App | Decl | Lit
+typedef Lit = LitInt { i: s64 }
+              | LitBool { b: bool }
+              | LitStr { s: istring }
+
+function type_of(lit: Lit): Type {
+    match (lit) {
+        LitInt  {} -> Int,
+        LitBool {} -> Bool,
+        LitStr  {} -> String
+    }
+}
+
+typedef Scope = u32
+
+// TODO: Every type should be interned
+input relation Function(name: Ident, id: FuncId, scope: Scope, ret: Option<Type>)
+input relation FuncArg(func: FuncId, name: Ident, ty: Type)
+input relation Expression(id: ExprId, func: FuncId, kind: ExprKind, scope: Scope)
+input relation Literal(expr: ExprId, lit: Lit)
+input relation Application(expr: ExprId, func: ExprId)
+input relation ApplicationArg(expr: ExprId, arg: ExprId)
+input relation VarDecl(expr: ExprId, name: Ident, val: ExprId)
+input relation InputScope(parent: Scope, child: Scope)
+
+
+relation ChildScope(parent: Scope, child: Scope)
+ChildScope(parent, child) :- InputScope(parent, child).
+ChildScope(parent, child) :- ChildScope(parent, interum), ChildScope(interum, child).
+
+
+relation Variable(scope: Scope, name: Ident, ty: Type)
+
+// Variable declarations
+Variable(scope, name, ty) :- VarDecl(expr, name, val),
+                             Expression(expr, _, _, scope),
+                             ExpressionType(val, ty).
+
+// Function names
+Variable(scope, name, ty) :-
+    Function(name, func, scope, func_ret),
+    var ret = ref_new(func_ret.unwrap_or(Unknown)),
+    FuncArg(func, _, ty),
+    var args = Aggregate((func, ret, scope, name), group_to_vec(ty)),
+    var ty = Func { args, ret }.
+
+// Function arguments
+Variable(scope, name, ty) :- FuncArg(func, name, ty), Function(_, func, scope, _).
+
+// Inheriting scopes, children can access all previously-declared variables
+Variable(scope, name, ty) :- Variable(var_scope, name, ty), ChildScope(var_scope, scope).
+
+
+relation ExpressionType(expr: ExprId, ty: Type)
+
+// Literals have a known type
+ExpressionType(expr, ty) :- Literal(expr, lit), var ty = lit.type_of().
+
+// Variable declarations have the type of their value
+ExpressionType(expr, ty) :- VarDecl(expr, _, val), ExpressionType(val, ty).
+
+// TODO: Function application
+ExpressionType(expr, ty) :-
+    Application(expr, func),
+    Expression(expr, _, Var { name }, scope),
+    Variable(scope, name, Func { .ret = ret }),
+    var ty = ret.deref().

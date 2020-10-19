@@ -1,0 +1,65 @@
+[package]
+name = "typecheck"
+version = "0.1.0"
+edition = "2018"
+autobins = false
+build = "src/build.rs"
+
+[features]
+default = ["command-line"]
+flatbuf = ["differential_datalog/flatbuf", "types/flatbuf", "value/flatbuf"]
+profile = ["cpuprofiler"]
+ovsdb = ["ddlog_ovsdb_adapter", "types/ovsdb", "value/ovsdb"]
+command-line = ["cmd_parser", "rustop"]
+nested_ts_32 = ["differential_datalog/nested_ts_32"]
+
+[target.'cfg(not(windows))'.build-dependencies]
+libtool = "0.1"
+
+[dependencies.differential_datalog]
+path = "./differential_datalog"
+
+[dependencies.cmd_parser]
+path = "./cmd_parser"
+optional = true
+
+[dependencies.ddlog_ovsdb_adapter]
+path = "./ovsdb"
+optional = true
+
+[dependencies.types]
+path = "./types"
+
+[dependencies.value]
+path = "./value"
+
+[dependencies]
+abomonation = "0.7"
+time = { version = "0.2", features = ["serde"] }
+ordered-float = { version = "2.0.0", features = ["serde"] }
+cpuprofiler = { version = "0.0", optional = true }
+differential-dataflow = "0.11.0"
+fnv = "1.0.2"
+once_cell = "1.4.1"
+libc = "0.2"
+num-traits = "0.2"
+num = { version = "0.2", features = ["serde"] }
+rustop = { version = "1.0.2", optional = true }
+serde = { version = "1.0", features = ["derive"] }
+timely = "0.11"
+
+[[bin]]
+name = "typecheck_cli"
+path = "src/main.rs"
+required-features = ["command-line"]
+
+# [lib] section must be in the end
+
+[lib]
+name = "typecheck_ddlog"
+# Compiler will append the crate-type attribute here as well as the
+# build profile and workspace definition
+# crate-type = ["rlib", "staticlib"]
+
+crate-type = ["rlib", "staticlib"]
+
