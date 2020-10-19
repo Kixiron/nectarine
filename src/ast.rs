@@ -25,6 +25,9 @@ pub struct Module {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Type {
     Path(Path),
+    Bool,
+    Int,
+    String,
 }
 
 #[derive(Clone, PartialEq, Eq, Hash)]

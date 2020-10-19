@@ -12,6 +12,10 @@ build = "build.rs"
 # lasso = "0.3.1"
 regex = "1"
 lalrpop-util = "0.19.1"
+typecheck = { path = "./typecheck_ddlog", default-features = false }
+differential_datalog = { path = "./typecheck_ddlog/differential_datalog" }
+types = { path = "./typecheck_ddlog/types" }
+value = { path = "./typecheck_ddlog/value" }
 
 [build-dependencies]
 lalrpop = { version = "0.19.1", features = ["lexer"] }
