@@ -105,55 +105,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                     let mut last_scope = function_scope;
                     for expr in func.body {
-                        let expr_scope = last_scope.scope();
-                        let expression_id = expr_scope.next_expr_id();
-
-                        expr_scope.push_expression(Expression {
-                            id: expression_id,
-                            func: function_id,
-                            kind: expr_kind(&expr),
-                            scope: expr_scope.id(),
-                        });
-
-                        match expr {
-                            ast::Expr::Let(binding) => {
-                                // TODO: Decl rhs
-                                expr_scope.push_var_decl(VarDecl {
-                                    expr: expression_id,
-                                    name: if let ast::Pattern::Ident(ident) = binding.binding {
-                                        internment::intern(&ident.0)
-                                    } else {
-                                        todo!()
-                                    },
-                                    // TODO: Decl rhs
-                                    val: 0,
-                                });
-                            }
-
-                            ast::Expr::Literal(lit) => {
-                                expr_scope.push_literal(Literal {
-                                    expr: expression_id,
-                                    lit: ddlog_literal(lit),
-                                });
-                            }
-
-                            ast::Expr::App(_app) => {
-                                // TODO: Application lhs and rhs
-                                expr_scope.push_app(Application {
-                                    expr: expression_id,
-                                    // TODO: Recursively do expressions
-                                    func: 0,
-                                });
-
-                                // TODO: App args
-                            }
-
-                            ast::Expr::Var(_) => {}
-
-                            _ => todo!(),
-                        }
-
-                        last_scope = expr_scope;
+                        last_scope = datalog_expression(last_scope, function_id, expr).1;
                     }
                 }
 
@@ -165,6 +117,63 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     })?;
 
     Ok(())
+}
+
+fn datalog_expression(scope: Scope<'_>, function_id: u32, expr: ast::Expr) -> (u32, Scope<'_>) {
+    let expr_scope = scope.scope();
+    let expression_id = expr_scope.next_expr_id();
+
+    expr_scope.push_expression(Expression {
+        id: expression_id,
+        func: function_id,
+        kind: expr_kind(&expr),
+        scope: expr_scope.id(),
+    });
+
+    match expr {
+        ast::Expr::Let(binding) => {
+            // TODO: Decl rhs
+            let val = datalog_expression(expr_scope.clone(), function_id, binding.value).0;
+            expr_scope.push_var_decl(VarDecl {
+                expr: expression_id,
+                name: if let ast::Pattern::Ident(ident) = binding.binding {
+                    internment::intern(&ident.0)
+                } else {
+                    todo!()
+                },
+                val,
+            });
+        }
+
+        ast::Expr::Literal(lit) => {
+            expr_scope.push_literal(Literal {
+                expr: expression_id,
+                lit: ddlog_literal(lit),
+            });
+        }
+
+        ast::Expr::App(app) => {
+            let func = datalog_expression(expr_scope.clone(), function_id, app.func).0;
+            expr_scope.push_app(Application {
+                expr: expression_id,
+                func,
+            });
+
+            for arg in app.args {
+                let arg = datalog_expression(expr_scope.clone(), function_id, arg).0;
+                expr_scope.push_app_arg(ApplicationArg {
+                    expr: expression_id,
+                    arg,
+                });
+            }
+        }
+
+        ast::Expr::Var(_) => {}
+
+        _ => todo!(),
+    }
+
+    (expression_id, expr_scope)
 }
 
 type DdlogResult<T> = Result<T, String>;
@@ -281,6 +290,7 @@ impl<'ddlog> DatalogTransaction<'ddlog> {
     }
 }
 
+#[derive(Clone)]
 struct Scope<'ddlog> {
     datalog: Rc<RefCell<DatalogInner>>,
     id: u32,
@@ -355,6 +365,13 @@ impl<'ddlog> Scope<'ddlog> {
         self.datalog.borrow_mut().updates.push(Update::Insert {
             relid: Relations::Application as RelId,
             v: Value::Application(app).into_ddvalue(),
+        });
+    }
+
+    pub fn push_app_arg(&self, arg: ApplicationArg) {
+        self.datalog.borrow_mut().updates.push(Update::Insert {
+            relid: Relations::ApplicationArg as RelId,
+            v: Value::ApplicationArg(arg).into_ddvalue(),
         });
     }
 }
