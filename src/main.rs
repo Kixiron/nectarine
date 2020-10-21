@@ -3,6 +3,7 @@
 mod ast;
 
 use lalrpop_util::lalrpop_mod;
+use std::{cell::RefCell, marker::PhantomData, mem, rc::Rc};
 
 lalrpop_mod!(grammar);
 
@@ -55,7 +56,7 @@ pub struct Ident(String);
 use differential_datalog::{
     ddval::{DDValConvert, DDValue},
     program::{RelId, Update},
-    record::{Record, UpdCmd},
+    record::Record,
     DDlog, DeltaMap,
 };
 use typecheck_ddlog::api::HDDlog;
@@ -72,76 +73,52 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let items = grammar::ItemsParser::new().parse(source)?;
     println!("{:#?}", items);
 
-    let (mut hddlog, init_state) = HDDlog::run(2, false, |_: usize, _: &Record, _: isize| {})?;
+    let mut ddlog = Datalog::new()?;
 
-    println!("Initial state");
-    dump_delta(&init_state);
+    ddlog.transaction(move |trans| {
+        let toplevel_scope = trans.scope();
 
-    hddlog.transaction_start()?;
-
-    let mut updates = Vec::new();
-    let mut func_id = 0;
-    let mut scope = 0;
-    let mut expr_id = 0;
-
-    for item in items {
-        match item {
-            ast::Item::Func(func) => {
-                let function_id = func_id;
-                func_id += 1;
-                let func_scope = scope;
-                scope += 1;
-
-                updates.push(Update::Insert {
-                    relid: Relations::Function as RelId,
-                    v: Value::Function(Function {
+        for item in items {
+            match item {
+                ast::Item::Func(func) => {
+                    let function_id = toplevel_scope.next_func_id();
+                    toplevel_scope.push_function(Function {
                         name: internment::intern(&func.name.0),
                         id: function_id,
                         ret: func.ret.map(ddlog_type).into(),
-                        scope: func_scope,
-                    })
-                    .into_ddvalue(),
-                });
+                        scope: toplevel_scope.id(),
+                    });
 
-                for (pat, ty) in func.params {
-                    if let ast::Pattern::Ident(name) = pat {
-                        updates.push(Update::Insert {
-                            relid: Relations::FuncArg as RelId,
-                            v: Value::FuncArg(FuncArg {
+                    let function_scope = toplevel_scope.scope();
+
+                    for (pat, ty) in func.params {
+                        if let ast::Pattern::Ident(name) = pat {
+                            function_scope.push_func_arg(FuncArg {
                                 func: function_id,
                                 name: internment::intern(&name.0),
                                 ty: ddlog_type(ty),
-                            })
-                            .into_ddvalue(),
-                        });
-                    } else {
-                        todo!()
+                            });
+                        } else {
+                            todo!()
+                        }
                     }
-                }
 
-                for expr in func.body {
-                    let expr_scope = scope;
-                    scope += 1;
-                    let expression_id = expr_id;
-                    expr_id += 1;
+                    let mut last_scope = function_scope;
+                    for expr in func.body {
+                        let expr_scope = last_scope.scope();
+                        let expression_id = expr_scope.next_expr_id();
 
-                    updates.push(Update::Insert {
-                        relid: Relations::Expression as RelId,
-                        v: Value::Expression(Expression {
+                        expr_scope.push_expression(Expression {
                             id: expression_id,
                             func: function_id,
                             kind: expr_kind(&expr),
-                            scope: expr_scope,
-                        })
-                        .into_ddvalue(),
-                    });
+                            scope: expr_scope.id(),
+                        });
 
-                    match expr {
-                        ast::Expr::Let(binding) => {
-                            // TODO: Decl rhs
-                            updates.push(Update::Insert {
-                                relid: Relations::VarDecl as RelId,
-                                v: Value::VarDecl(VarDecl {
+                        match expr {
+                            ast::Expr::Let(binding) => {
+                                // TODO: Decl rhs
+                                expr_scope.push_var_decl(VarDecl {
                                     expr: expression_id,
                                     name: if let ast::Pattern::Ident(ident) = binding.binding {
                                         internment::intern(&ident.0)
@@ -150,55 +127,236 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     },
                                     // TODO: Decl rhs
                                     val: 0,
-                                })
-                                .into_ddvalue(),
-                            });
-                        }
+                                });
+                            }
 
-                        ast::Expr::Literal(lit) => {
-                            updates.push(Update::Insert {
-                                relid: Relations::Literal as RelId,
-                                v: Value::Literal(Literal {
+                            ast::Expr::Literal(lit) => {
+                                expr_scope.push_literal(Literal {
                                     expr: expression_id,
                                     lit: ddlog_literal(lit),
-                                })
-                                .into_ddvalue(),
-                            });
-                        }
+                                });
+                            }
 
-                        ast::Expr::App(app) => {
-                            // TODO: Application lhs and rhs
-                            updates.push(Update::Insert {
-                                relid: Relations::Application as RelId,
-                                v: Value::Application(Application {
+                            ast::Expr::App(_app) => {
+                                // TODO: Application lhs and rhs
+                                expr_scope.push_app(Application {
                                     expr: expression_id,
                                     // TODO: Recursively do expressions
                                     func: 0,
-                                })
-                                .into_ddvalue(),
-                            });
+                                });
 
-                            // TODO: App args
+                                // TODO: App args
+                            }
+
+                            ast::Expr::Var(_) => {}
+
+                            _ => todo!(),
                         }
 
-                        ast::Expr::Var(_) => {}
-
-                        _ => todo!(),
+                        last_scope = expr_scope;
                     }
                 }
-            }
 
-            ast::Item::Module(_) => todo!(),
+                ast::Item::Module(_) => todo!(),
+            }
+        }
+
+        Ok(())
+    })?;
+
+    Ok(())
+}
+
+type DdlogResult<T> = Result<T, String>;
+
+struct Datalog {
+    datalog: Rc<RefCell<DatalogInner>>,
+}
+
+impl Datalog {
+    pub fn new() -> DdlogResult<Self> {
+        let (hddlog, _init_state) = HDDlog::run(2, false, |_: usize, _: &Record, _: isize| {})?;
+
+        Ok(Self {
+            datalog: Rc::new(RefCell::new(DatalogInner {
+                hddlog,
+                updates: Vec::with_capacity(100),
+                scope_id: 0,
+                function_id: 0,
+                expression_id: 0,
+            })),
+        })
+    }
+
+    fn transaction<F>(&mut self, transaction: F) -> DdlogResult<()>
+    where
+        F: for<'trans> FnOnce(&mut DatalogTransaction<'trans>) -> DdlogResult<()>,
+    {
+        let mut trans = DatalogTransaction::new(self.datalog.clone())?;
+        transaction(&mut trans)?;
+        trans.commit()?;
+
+        Ok(())
+    }
+}
+
+struct DatalogInner {
+    hddlog: HDDlog,
+    updates: Vec<Update<DDValue>>,
+    scope_id: u32,
+    function_id: u32,
+    expression_id: u32,
+}
+
+impl DatalogInner {
+    pub fn inc_scope(&mut self) -> u32 {
+        let temp = self.scope_id;
+        self.scope_id += 1;
+        temp
+    }
+
+    pub fn inc_function(&mut self) -> u32 {
+        let temp = self.function_id;
+        self.function_id += 1;
+        temp
+    }
+
+    pub fn inc_expression(&mut self) -> u32 {
+        let temp = self.expression_id;
+        self.expression_id += 1;
+        temp
+    }
+
+    fn push_scope(&mut self, scope: InputScope) {
+        self.updates.push(Update::Insert {
+            relid: Relations::InputScope as RelId,
+            v: Value::InputScope(scope).into_ddvalue(),
+        });
+    }
+}
+
+struct DatalogTransaction<'ddlog> {
+    datalog: Rc<RefCell<DatalogInner>>,
+    __lifetime: PhantomData<&'ddlog ()>,
+}
+
+impl<'ddlog> DatalogTransaction<'ddlog> {
+    fn new(datalog: Rc<RefCell<DatalogInner>>) -> DdlogResult<Self> {
+        datalog.borrow_mut().hddlog.transaction_start()?;
+
+        Ok(Self {
+            datalog,
+            __lifetime: PhantomData,
+        })
+    }
+
+    pub fn scope(&self) -> Scope<'_> {
+        let mut datalog = self.datalog.borrow_mut();
+        let id = datalog.inc_scope();
+        datalog.push_scope(InputScope {
+            // FIXME: ???
+            parent: 0,
+            child: id,
+        });
+
+        Scope {
+            datalog: self.datalog.clone(),
+            id,
+            __lifetime: PhantomData,
         }
     }
 
-    hddlog.apply_valupdates(updates.into_iter())?;
-    let delta = hddlog.transaction_commit_dump_changes()?;
+    pub fn commit(self) -> DdlogResult<()> {
+        let mut datalog = self.datalog.borrow_mut();
 
-    println!("State after transaction");
-    dump_delta(&delta);
+        let updates = mem::take(&mut datalog.updates);
+        datalog.hddlog.apply_valupdates(updates.into_iter())?;
 
-    Ok(())
+        let delta = datalog.hddlog.transaction_commit_dump_changes()?;
+
+        println!("State after transaction");
+        dump_delta(&delta);
+
+        Ok(())
+    }
+}
+
+struct Scope<'ddlog> {
+    datalog: Rc<RefCell<DatalogInner>>,
+    id: u32,
+    __lifetime: PhantomData<&'ddlog ()>,
+}
+
+impl<'ddlog> Scope<'ddlog> {
+    pub fn scope(&self) -> Scope<'ddlog> {
+        let mut datalog = self.datalog.borrow_mut();
+        let id = datalog.inc_scope();
+        datalog.push_scope(InputScope {
+            // FIXME: ???
+            parent: self.id,
+            child: id,
+        });
+
+        Scope {
+            datalog: self.datalog.clone(),
+            id,
+            __lifetime: PhantomData,
+        }
+    }
+
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+
+    pub fn next_func_id(&self) -> u32 {
+        self.datalog.borrow_mut().inc_function()
+    }
+
+    pub fn next_expr_id(&self) -> u32 {
+        self.datalog.borrow_mut().inc_expression()
+    }
+
+    pub fn push_function(&self, func: Function) {
+        self.datalog.borrow_mut().updates.push(Update::Insert {
+            relid: Relations::Function as RelId,
+            v: Value::Function(func).into_ddvalue(),
+        });
+    }
+
+    pub fn push_func_arg(&self, arg: FuncArg) {
+        self.datalog.borrow_mut().updates.push(Update::Insert {
+            relid: Relations::FuncArg as RelId,
+            v: Value::FuncArg(arg).into_ddvalue(),
+        });
+    }
+
+    pub fn push_expression(&self, expr: Expression) {
+        self.datalog.borrow_mut().updates.push(Update::Insert {
+            relid: Relations::Expression as RelId,
+            v: Value::Expression(expr).into_ddvalue(),
+        });
+    }
+
+    pub fn push_var_decl(&self, var_decl: VarDecl) {
+        self.datalog.borrow_mut().updates.push(Update::Insert {
+            relid: Relations::VarDecl as RelId,
+            v: Value::VarDecl(var_decl).into_ddvalue(),
+        });
+    }
+
+    pub fn push_literal(&self, literal: Literal) {
+        self.datalog.borrow_mut().updates.push(Update::Insert {
+            relid: Relations::Literal as RelId,
+            v: Value::Literal(literal).into_ddvalue(),
+        });
+    }
+
+    pub fn push_app(&self, app: Application) {
+        self.datalog.borrow_mut().updates.push(Update::Insert {
+            relid: Relations::Application as RelId,
+            v: Value::Application(app).into_ddvalue(),
+        });
+    }
 }
 
 fn ddlog_literal(lit: ast::Literal) -> Lit {
@@ -222,12 +380,12 @@ fn ddlog_type(ty: ast::Type) -> Type {
 
 fn expr_kind(expr: &ast::Expr) -> ExprKind {
     match expr {
-        ast::Expr::Let(binding) => ExprKind::Decl,
-        ast::Expr::Literal(literal) => ExprKind::Lit,
+        ast::Expr::Let(_) => ExprKind::Decl,
+        ast::Expr::Literal(_) => ExprKind::Lit,
         ast::Expr::Var(var) => ExprKind::Var {
             v: internment::intern(&var.0),
         },
-        ast::Expr::App(app) => ExprKind::App,
+        ast::Expr::App(_) => ExprKind::App,
 
         _ => todo!(),
     }
