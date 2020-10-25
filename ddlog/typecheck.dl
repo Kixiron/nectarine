@@ -10,6 +10,7 @@ typedef Type = Bool
               | Unit
               | Unknown
               | Func { args: Vec<Type>, ret: Ref<Type> }
+              | Poison
 typedef ExprKind = Var { v: Ident } | App | Decl | Lit
 typedef Lit = LitInt { i: s64 }
               | LitBool { b: bool }
@@ -44,9 +45,10 @@ ChildScope(parent, child) :- ChildScope(parent, interum), ChildScope(interum, ch
 relation Variable(scope: Scope, name: Ident, ty: Type)
 
 // Variable declarations
-Variable(scope, name, ty) :- VarDecl(expr, name, val),
-                             Expression(expr, _, _, scope),
-                             ExpressionType(val, ty).
+Variable(scope, name, ty) :- 
+    VarDecl(expr, name, val),
+    Expression(expr, _, _, scope),
+    ExpressionType(val, ty).
 
 // Function names
 Variable(scope, name, ty) :-
@@ -63,13 +65,23 @@ Variable(scope, name, ty) :- FuncArg(func, name, ty), Function(_, func, scope, _
 Variable(scope, name, ty) :- Variable(var_scope, name, ty), ChildScope(var_scope, scope).
 
 
+output relation OutOfScopeVar(variable: Ident, used: ExprId)
+OutOfScopeVar(variable, used) :-
+    Expression(used, _, Var { .v = variable }, scope),
+    not Variable(scope, variable, _).
+
+
 relation ExpressionType(expr: ExprId, ty: Type)
 
 // Literals have a known type
 ExpressionType(expr, ty) :- Literal(expr, lit), var ty = lit.type_of().
 
 // Variable declarations have the type of their value
+// FIXME: This may should be unit
 ExpressionType(expr, ty) :- VarDecl(expr, _, val), ExpressionType(val, ty).
+
+// Propigate variable types to expressions
+ExpressionType(expr, ty) :- Expression(expr, _, Var { .v = v }, scope), Variable(scope, v, ty).
 
 // TODO: Function application
 ExpressionType(expr, ty) :-
@@ -77,3 +89,13 @@ ExpressionType(expr, ty) :-
     Expression(expr, _, Var { name }, scope),
     Variable(scope, name, Func { .ret = ret }),
     var ty = ret.deref().
+
+
+output relation UninferedExpr(expr: ExprId)
+UninferedExpr(expr) :- Expression(expr, _, _, _), not ExpressionType(expr, _).
+UninferedExpr(expr) :- Expression(expr, _, _, _), ExpressionType(expr, Poison).
+
+output relation NonexistantFunction(name: Ident, invoked: ExprId)
+NonexistantFunction(name, invoked) :-
+    Application(invoked, func),
+    Expression(func, _, Var { .v = name }, _).

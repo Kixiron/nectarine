@@ -111,70 +111,25 @@ macro_rules! deserialize_map_from_array {
     };
 }
 
+
 pub mod ddlog_std;
-pub mod debug;
 pub mod internment;
+pub mod debug;
 pub mod log;
 pub mod vec;
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
 pub struct Application {
     pub expr: crate::ExprId,
-    pub func: crate::ExprId,
+    pub func: crate::ExprId
 }
-impl abomonation::Abomonation for Application {}
-impl differential_datalog::record::FromRecord for Application {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Application" if _args.len() == 2 => Ok(crate::Application {
-                        expr: <crate::ExprId>::from_record(&_args[0])?,
-                        func: <crate::ExprId>::from_record(&_args[1])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Application in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Application" => Ok(crate::Application {
-                        expr: differential_datalog::record::arg_extract::<crate::ExprId>(
-                            _args, "expr",
-                        )?,
-                        func: differential_datalog::record::arg_extract::<crate::ExprId>(
-                            _args, "func",
-                        )?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Application in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(Application["Application"]<>, expr, func);
+impl abomonation::Abomonation for Application{}
+::differential_datalog::decl_struct_from_record!(Application["Application"]<>, ["Application"][2]{[0]expr["expr"]: crate::ExprId, [1]func["func"]: crate::ExprId});
+::differential_datalog::decl_struct_into_record!(Application, ["Application"]<>, expr, func);
 ::differential_datalog::decl_record_mutator_struct!(Application, <>, expr: crate::ExprId, func: crate::ExprId);
 impl ::std::fmt::Display for Application {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::Application { expr, func } => {
+            crate::Application{expr,func} => {
                 __formatter.write_str("Application{")?;
                 ::std::fmt::Debug::fmt(expr, __formatter)?;
                 __formatter.write_str(",")?;
@@ -192,62 +147,16 @@ impl ::std::fmt::Debug for Application {
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
 pub struct ApplicationArg {
     pub expr: crate::ExprId,
-    pub arg: crate::ExprId,
+    pub arg: crate::ExprId
 }
-impl abomonation::Abomonation for ApplicationArg {}
-impl differential_datalog::record::FromRecord for ApplicationArg {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "ApplicationArg" if _args.len() == 2 => Ok(crate::ApplicationArg {
-                        expr: <crate::ExprId>::from_record(&_args[0])?,
-                        arg: <crate::ExprId>::from_record(&_args[1])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type ApplicationArg in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "ApplicationArg" => Ok(crate::ApplicationArg {
-                        expr: differential_datalog::record::arg_extract::<crate::ExprId>(
-                            _args, "expr",
-                        )?,
-                        arg: differential_datalog::record::arg_extract::<crate::ExprId>(
-                            _args, "arg",
-                        )?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type ApplicationArg in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(ApplicationArg["ApplicationArg"]<>, expr, arg);
+impl abomonation::Abomonation for ApplicationArg{}
+::differential_datalog::decl_struct_from_record!(ApplicationArg["ApplicationArg"]<>, ["ApplicationArg"][2]{[0]expr["expr"]: crate::ExprId, [1]arg["arg"]: crate::ExprId});
+::differential_datalog::decl_struct_into_record!(ApplicationArg, ["ApplicationArg"]<>, expr, arg);
 ::differential_datalog::decl_record_mutator_struct!(ApplicationArg, <>, expr: crate::ExprId, arg: crate::ExprId);
 impl ::std::fmt::Display for ApplicationArg {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::ApplicationArg { expr, arg } => {
+            crate::ApplicationArg{expr,arg} => {
                 __formatter.write_str("ApplicationArg{")?;
                 ::std::fmt::Debug::fmt(expr, __formatter)?;
                 __formatter.write_str(",")?;
@@ -265,62 +174,16 @@ impl ::std::fmt::Debug for ApplicationArg {
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
 pub struct ChildScope {
     pub parent: crate::Scope,
-    pub child: crate::Scope,
+    pub child: crate::Scope
 }
-impl abomonation::Abomonation for ChildScope {}
-impl differential_datalog::record::FromRecord for ChildScope {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "ChildScope" if _args.len() == 2 => Ok(crate::ChildScope {
-                        parent: <crate::Scope>::from_record(&_args[0])?,
-                        child: <crate::Scope>::from_record(&_args[1])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type ChildScope in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "ChildScope" => Ok(crate::ChildScope {
-                        parent: differential_datalog::record::arg_extract::<crate::Scope>(
-                            _args, "parent",
-                        )?,
-                        child: differential_datalog::record::arg_extract::<crate::Scope>(
-                            _args, "child",
-                        )?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type ChildScope in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(ChildScope["ChildScope"]<>, parent, child);
+impl abomonation::Abomonation for ChildScope{}
+::differential_datalog::decl_struct_from_record!(ChildScope["ChildScope"]<>, ["ChildScope"][2]{[0]parent["parent"]: crate::Scope, [1]child["child"]: crate::Scope});
+::differential_datalog::decl_struct_into_record!(ChildScope, ["ChildScope"]<>, parent, child);
 ::differential_datalog::decl_record_mutator_struct!(ChildScope, <>, parent: crate::Scope, child: crate::Scope);
 impl ::std::fmt::Display for ChildScope {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::ChildScope { parent, child } => {
+            crate::ChildScope{parent,child} => {
                 __formatter.write_str("ChildScope{")?;
                 ::std::fmt::Debug::fmt(parent, __formatter)?;
                 __formatter.write_str(",")?;
@@ -338,78 +201,34 @@ impl ::std::fmt::Debug for ChildScope {
 pub type ExprId = u32;
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub enum ExprKind {
-    Var { v: crate::Ident },
+    Var {
+        v: crate::Ident
+    },
     App,
     Decl,
-    Lit,
+    Lit
 }
-impl abomonation::Abomonation for ExprKind {}
-impl differential_datalog::record::FromRecord for ExprKind {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Var" if _args.len() == 1 => Ok(crate::ExprKind::Var {
-                        v: <crate::Ident>::from_record(&_args[0])?,
-                    }),
-                    "App" if _args.is_empty() => Ok(crate::ExprKind::App {}),
-                    "Decl" if _args.is_empty() => Ok(crate::ExprKind::Decl {}),
-                    "Lit" if _args.is_empty() => Ok(crate::ExprKind::Lit {}),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type ExprKind in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Var" => Ok(crate::ExprKind::Var {
-                        v: differential_datalog::record::arg_extract::<crate::Ident>(_args, "v")?,
-                    }),
-                    "App" => Ok(crate::ExprKind::App {}),
-                    "Decl" => Ok(crate::ExprKind::Decl {}),
-                    "Lit" => Ok(crate::ExprKind::Lit {}),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type ExprKind in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_enum_into_record!(ExprKind, <>, Var["Var"]{v}, App["App"]{}, Decl["Decl"]{}, Lit["Lit"]{});
-::differential_datalog::decl_record_mutator_enum!(ExprKind, <>, Var{v: crate::Ident}, App{}, Decl{}, Lit{});
+impl abomonation::Abomonation for ExprKind{}
+::differential_datalog::decl_enum_from_record!(ExprKind["ExprKind"]<>, Var["Var"][1]{[0]v["v"]: crate::Ident}, App["App"][0]{}, Decl["Decl"][0]{}, Lit["Lit"][0]{});
+::differential_datalog::decl_enum_into_record!(ExprKind<>, Var["Var"]{v}, App["App"]{}, Decl["Decl"]{}, Lit["Lit"]{});
+::differential_datalog::decl_record_mutator_enum!(ExprKind<>, Var{v: crate::Ident}, App{}, Decl{}, Lit{});
 impl ::std::fmt::Display for ExprKind {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::ExprKind::Var { v } => {
+            crate::ExprKind::Var{v} => {
                 __formatter.write_str("Var{")?;
                 ::std::fmt::Debug::fmt(v, __formatter)?;
                 __formatter.write_str("}")
-            }
-            crate::ExprKind::App {} => {
+            },
+            crate::ExprKind::App{} => {
                 __formatter.write_str("App{")?;
                 __formatter.write_str("}")
-            }
-            crate::ExprKind::Decl {} => {
+            },
+            crate::ExprKind::Decl{} => {
                 __formatter.write_str("Decl{")?;
                 __formatter.write_str("}")
-            }
-            crate::ExprKind::Lit {} => {
+            },
+            crate::ExprKind::Lit{} => {
                 __formatter.write_str("Lit{")?;
                 __formatter.write_str("}")
             }
@@ -423,9 +242,7 @@ impl ::std::fmt::Debug for ExprKind {
 }
 impl ::std::default::Default for ExprKind {
     fn default() -> Self {
-        crate::ExprKind::Var {
-            v: ::std::default::Default::default(),
-        }
+        crate::ExprKind::Var{v : ::std::default::Default::default()}
     }
 }
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
@@ -433,75 +250,16 @@ pub struct Expression {
     pub id: crate::ExprId,
     pub func: crate::FuncId,
     pub kind: crate::ExprKind,
-    pub scope: crate::Scope,
+    pub scope: crate::Scope
 }
-impl abomonation::Abomonation for Expression {}
-impl differential_datalog::record::FromRecord for Expression {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Expression" if _args.len() == 4 => Ok(crate::Expression {
-                        id: <crate::ExprId>::from_record(&_args[0])?,
-                        func: <crate::FuncId>::from_record(&_args[1])?,
-                        kind: <crate::ExprKind>::from_record(&_args[2])?,
-                        scope: <crate::Scope>::from_record(&_args[3])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Expression in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Expression" => Ok(crate::Expression {
-                        id: differential_datalog::record::arg_extract::<crate::ExprId>(
-                            _args, "id",
-                        )?,
-                        func: differential_datalog::record::arg_extract::<crate::FuncId>(
-                            _args, "func",
-                        )?,
-                        kind: differential_datalog::record::arg_extract::<crate::ExprKind>(
-                            _args, "kind",
-                        )?,
-                        scope: differential_datalog::record::arg_extract::<crate::Scope>(
-                            _args, "scope",
-                        )?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Expression in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(Expression["Expression"]<>, id, func, kind, scope);
+impl abomonation::Abomonation for Expression{}
+::differential_datalog::decl_struct_from_record!(Expression["Expression"]<>, ["Expression"][4]{[0]id["id"]: crate::ExprId, [1]func["func"]: crate::FuncId, [2]kind["kind"]: crate::ExprKind, [3]scope["scope"]: crate::Scope});
+::differential_datalog::decl_struct_into_record!(Expression, ["Expression"]<>, id, func, kind, scope);
 ::differential_datalog::decl_record_mutator_struct!(Expression, <>, id: crate::ExprId, func: crate::FuncId, kind: crate::ExprKind, scope: crate::Scope);
 impl ::std::fmt::Display for Expression {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::Expression {
-                id,
-                func,
-                kind,
-                scope,
-            } => {
+            crate::Expression{id,func,kind,scope} => {
                 __formatter.write_str("Expression{")?;
                 ::std::fmt::Debug::fmt(id, __formatter)?;
                 __formatter.write_str(",")?;
@@ -523,60 +281,16 @@ impl ::std::fmt::Debug for Expression {
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
 pub struct ExpressionType {
     pub expr: crate::ExprId,
-    pub ty: crate::Type,
+    pub ty: crate::Type
 }
-impl abomonation::Abomonation for ExpressionType {}
-impl differential_datalog::record::FromRecord for ExpressionType {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "ExpressionType" if _args.len() == 2 => Ok(crate::ExpressionType {
-                        expr: <crate::ExprId>::from_record(&_args[0])?,
-                        ty: <crate::Type>::from_record(&_args[1])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type ExpressionType in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "ExpressionType" => Ok(crate::ExpressionType {
-                        expr: differential_datalog::record::arg_extract::<crate::ExprId>(
-                            _args, "expr",
-                        )?,
-                        ty: differential_datalog::record::arg_extract::<crate::Type>(_args, "ty")?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type ExpressionType in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(ExpressionType["ExpressionType"]<>, expr, ty);
+impl abomonation::Abomonation for ExpressionType{}
+::differential_datalog::decl_struct_from_record!(ExpressionType["ExpressionType"]<>, ["ExpressionType"][2]{[0]expr["expr"]: crate::ExprId, [1]ty["ty"]: crate::Type});
+::differential_datalog::decl_struct_into_record!(ExpressionType, ["ExpressionType"]<>, expr, ty);
 ::differential_datalog::decl_record_mutator_struct!(ExpressionType, <>, expr: crate::ExprId, ty: crate::Type);
 impl ::std::fmt::Display for ExpressionType {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::ExpressionType { expr, ty } => {
+            crate::ExpressionType{expr,ty} => {
                 __formatter.write_str("ExpressionType{")?;
                 ::std::fmt::Debug::fmt(expr, __formatter)?;
                 __formatter.write_str(",")?;
@@ -595,64 +309,16 @@ impl ::std::fmt::Debug for ExpressionType {
 pub struct FuncArg {
     pub func: crate::FuncId,
     pub name: crate::Ident,
-    pub ty: crate::Type,
+    pub ty: crate::Type
 }
-impl abomonation::Abomonation for FuncArg {}
-impl differential_datalog::record::FromRecord for FuncArg {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "FuncArg" if _args.len() == 3 => Ok(crate::FuncArg {
-                        func: <crate::FuncId>::from_record(&_args[0])?,
-                        name: <crate::Ident>::from_record(&_args[1])?,
-                        ty: <crate::Type>::from_record(&_args[2])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type FuncArg in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "FuncArg" => Ok(crate::FuncArg {
-                        func: differential_datalog::record::arg_extract::<crate::FuncId>(
-                            _args, "func",
-                        )?,
-                        name: differential_datalog::record::arg_extract::<crate::Ident>(
-                            _args, "name",
-                        )?,
-                        ty: differential_datalog::record::arg_extract::<crate::Type>(_args, "ty")?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type FuncArg in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(FuncArg["FuncArg"]<>, func, name, ty);
+impl abomonation::Abomonation for FuncArg{}
+::differential_datalog::decl_struct_from_record!(FuncArg["FuncArg"]<>, ["FuncArg"][3]{[0]func["func"]: crate::FuncId, [1]name["name"]: crate::Ident, [2]ty["ty"]: crate::Type});
+::differential_datalog::decl_struct_into_record!(FuncArg, ["FuncArg"]<>, func, name, ty);
 ::differential_datalog::decl_record_mutator_struct!(FuncArg, <>, func: crate::FuncId, name: crate::Ident, ty: crate::Type);
 impl ::std::fmt::Display for FuncArg {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::FuncArg { func, name, ty } => {
+            crate::FuncArg{func,name,ty} => {
                 __formatter.write_str("FuncArg{")?;
                 ::std::fmt::Debug::fmt(func, __formatter)?;
                 __formatter.write_str(",")?;
@@ -675,75 +341,16 @@ pub struct Function {
     pub name: crate::Ident,
     pub id: crate::FuncId,
     pub scope: crate::Scope,
-    pub ret: crate::ddlog_std::Option<crate::Type>,
+    pub ret: crate::ddlog_std::Option<crate::Type>
 }
-impl abomonation::Abomonation for Function {}
-impl differential_datalog::record::FromRecord for Function {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Function" if _args.len() == 4 => Ok(crate::Function {
-                        name: <crate::Ident>::from_record(&_args[0])?,
-                        id: <crate::FuncId>::from_record(&_args[1])?,
-                        scope: <crate::Scope>::from_record(&_args[2])?,
-                        ret: <crate::ddlog_std::Option<crate::Type>>::from_record(&_args[3])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Function in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Function" => Ok(crate::Function {
-                        name: differential_datalog::record::arg_extract::<crate::Ident>(
-                            _args, "name",
-                        )?,
-                        id: differential_datalog::record::arg_extract::<crate::FuncId>(
-                            _args, "id",
-                        )?,
-                        scope: differential_datalog::record::arg_extract::<crate::Scope>(
-                            _args, "scope",
-                        )?,
-                        ret: differential_datalog::record::arg_extract::<
-                            crate::ddlog_std::Option<crate::Type>,
-                        >(_args, "ret")?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Function in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(Function["Function"]<>, name, id, scope, ret);
+impl abomonation::Abomonation for Function{}
+::differential_datalog::decl_struct_from_record!(Function["Function"]<>, ["Function"][4]{[0]name["name"]: crate::Ident, [1]id["id"]: crate::FuncId, [2]scope["scope"]: crate::Scope, [3]ret["ret"]: crate::ddlog_std::Option<crate::Type>});
+::differential_datalog::decl_struct_into_record!(Function, ["Function"]<>, name, id, scope, ret);
 ::differential_datalog::decl_record_mutator_struct!(Function, <>, name: crate::Ident, id: crate::FuncId, scope: crate::Scope, ret: crate::ddlog_std::Option<crate::Type>);
 impl ::std::fmt::Display for Function {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::Function {
-                name,
-                id,
-                scope,
-                ret,
-            } => {
+            crate::Function{name,id,scope,ret} => {
                 __formatter.write_str("Function{")?;
                 ::std::fmt::Debug::fmt(name, __formatter)?;
                 __formatter.write_str(",")?;
@@ -766,62 +373,16 @@ pub type Ident = crate::internment::istring;
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
 pub struct InputScope {
     pub parent: crate::Scope,
-    pub child: crate::Scope,
+    pub child: crate::Scope
 }
-impl abomonation::Abomonation for InputScope {}
-impl differential_datalog::record::FromRecord for InputScope {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "InputScope" if _args.len() == 2 => Ok(crate::InputScope {
-                        parent: <crate::Scope>::from_record(&_args[0])?,
-                        child: <crate::Scope>::from_record(&_args[1])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type InputScope in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "InputScope" => Ok(crate::InputScope {
-                        parent: differential_datalog::record::arg_extract::<crate::Scope>(
-                            _args, "parent",
-                        )?,
-                        child: differential_datalog::record::arg_extract::<crate::Scope>(
-                            _args, "child",
-                        )?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type InputScope in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(InputScope["InputScope"]<>, parent, child);
+impl abomonation::Abomonation for InputScope{}
+::differential_datalog::decl_struct_from_record!(InputScope["InputScope"]<>, ["InputScope"][2]{[0]parent["parent"]: crate::Scope, [1]child["child"]: crate::Scope});
+::differential_datalog::decl_struct_into_record!(InputScope, ["InputScope"]<>, parent, child);
 ::differential_datalog::decl_record_mutator_struct!(InputScope, <>, parent: crate::Scope, child: crate::Scope);
 impl ::std::fmt::Display for InputScope {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::InputScope { parent, child } => {
+            crate::InputScope{parent,child} => {
                 __formatter.write_str("InputScope{")?;
                 ::std::fmt::Debug::fmt(parent, __formatter)?;
                 __formatter.write_str(",")?;
@@ -838,84 +399,34 @@ impl ::std::fmt::Debug for InputScope {
 }
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub enum Lit {
-    LitInt { i: crate::ddlog_std::s64 },
-    LitBool { b: bool },
-    LitStr { s: crate::internment::istring },
-}
-impl abomonation::Abomonation for Lit {}
-impl differential_datalog::record::FromRecord for Lit {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "LitInt" if _args.len() == 1 => Ok(crate::Lit::LitInt {
-                        i: <crate::ddlog_std::s64>::from_record(&_args[0])?,
-                    }),
-                    "LitBool" if _args.len() == 1 => Ok(crate::Lit::LitBool {
-                        b: <bool>::from_record(&_args[0])?,
-                    }),
-                    "LitStr" if _args.len() == 1 => Ok(crate::Lit::LitStr {
-                        s: <crate::internment::istring>::from_record(&_args[0])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Lit in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "LitInt" => Ok(crate::Lit::LitInt {
-                        i: differential_datalog::record::arg_extract::<crate::ddlog_std::s64>(
-                            _args, "i",
-                        )?,
-                    }),
-                    "LitBool" => Ok(crate::Lit::LitBool {
-                        b: differential_datalog::record::arg_extract::<bool>(_args, "b")?,
-                    }),
-                    "LitStr" => Ok(crate::Lit::LitStr {
-                        s: differential_datalog::record::arg_extract::<crate::internment::istring>(
-                            _args, "s",
-                        )?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Lit in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
+    LitInt {
+        i: crate::ddlog_std::s64
+    },
+    LitBool {
+        b: bool
+    },
+    LitStr {
+        s: crate::internment::istring
     }
 }
-::differential_datalog::decl_enum_into_record!(Lit, <>, LitInt["LitInt"]{i}, LitBool["LitBool"]{b}, LitStr["LitStr"]{s});
-::differential_datalog::decl_record_mutator_enum!(Lit, <>, LitInt{i: crate::ddlog_std::s64}, LitBool{b: bool}, LitStr{s: crate::internment::istring});
+impl abomonation::Abomonation for Lit{}
+::differential_datalog::decl_enum_from_record!(Lit["Lit"]<>, LitInt["LitInt"][1]{[0]i["i"]: crate::ddlog_std::s64}, LitBool["LitBool"][1]{[0]b["b"]: bool}, LitStr["LitStr"][1]{[0]s["s"]: crate::internment::istring});
+::differential_datalog::decl_enum_into_record!(Lit<>, LitInt["LitInt"]{i}, LitBool["LitBool"]{b}, LitStr["LitStr"]{s});
+::differential_datalog::decl_record_mutator_enum!(Lit<>, LitInt{i: crate::ddlog_std::s64}, LitBool{b: bool}, LitStr{s: crate::internment::istring});
 impl ::std::fmt::Display for Lit {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::Lit::LitInt { i } => {
+            crate::Lit::LitInt{i} => {
                 __formatter.write_str("LitInt{")?;
                 ::std::fmt::Debug::fmt(i, __formatter)?;
                 __formatter.write_str("}")
-            }
-            crate::Lit::LitBool { b } => {
+            },
+            crate::Lit::LitBool{b} => {
                 __formatter.write_str("LitBool{")?;
                 ::std::fmt::Debug::fmt(b, __formatter)?;
                 __formatter.write_str("}")
-            }
-            crate::Lit::LitStr { s } => {
+            },
+            crate::Lit::LitStr{s} => {
                 __formatter.write_str("LitStr{")?;
                 ::std::fmt::Debug::fmt(s, __formatter)?;
                 __formatter.write_str("}")
@@ -930,68 +441,22 @@ impl ::std::fmt::Debug for Lit {
 }
 impl ::std::default::Default for Lit {
     fn default() -> Self {
-        crate::Lit::LitInt {
-            i: ::std::default::Default::default(),
-        }
+        crate::Lit::LitInt{i : ::std::default::Default::default()}
     }
 }
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
 pub struct Literal {
     pub expr: crate::ExprId,
-    pub lit: crate::Lit,
+    pub lit: crate::Lit
 }
-impl abomonation::Abomonation for Literal {}
-impl differential_datalog::record::FromRecord for Literal {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Literal" if _args.len() == 2 => Ok(crate::Literal {
-                        expr: <crate::ExprId>::from_record(&_args[0])?,
-                        lit: <crate::Lit>::from_record(&_args[1])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Literal in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Literal" => Ok(crate::Literal {
-                        expr: differential_datalog::record::arg_extract::<crate::ExprId>(
-                            _args, "expr",
-                        )?,
-                        lit: differential_datalog::record::arg_extract::<crate::Lit>(_args, "lit")?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Literal in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(Literal["Literal"]<>, expr, lit);
+impl abomonation::Abomonation for Literal{}
+::differential_datalog::decl_struct_from_record!(Literal["Literal"]<>, ["Literal"][2]{[0]expr["expr"]: crate::ExprId, [1]lit["lit"]: crate::Lit});
+::differential_datalog::decl_struct_into_record!(Literal, ["Literal"]<>, expr, lit);
 ::differential_datalog::decl_record_mutator_struct!(Literal, <>, expr: crate::ExprId, lit: crate::Lit);
 impl ::std::fmt::Display for Literal {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::Literal { expr, lit } => {
+            crate::Literal{expr,lit} => {
                 __formatter.write_str("Literal{")?;
                 ::std::fmt::Debug::fmt(expr, __formatter)?;
                 __formatter.write_str(",")?;
@@ -1006,6 +471,60 @@ impl ::std::fmt::Debug for Literal {
         ::std::fmt::Display::fmt(&self, f)
     }
 }
+#[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
+pub struct NonexistantFunction {
+    pub name: crate::Ident,
+    pub invoked: crate::ExprId
+}
+impl abomonation::Abomonation for NonexistantFunction{}
+::differential_datalog::decl_struct_from_record!(NonexistantFunction["NonexistantFunction"]<>, ["NonexistantFunction"][2]{[0]name["name"]: crate::Ident, [1]invoked["invoked"]: crate::ExprId});
+::differential_datalog::decl_struct_into_record!(NonexistantFunction, ["NonexistantFunction"]<>, name, invoked);
+::differential_datalog::decl_record_mutator_struct!(NonexistantFunction, <>, name: crate::Ident, invoked: crate::ExprId);
+impl ::std::fmt::Display for NonexistantFunction {
+    fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        match self {
+            crate::NonexistantFunction{name,invoked} => {
+                __formatter.write_str("NonexistantFunction{")?;
+                ::std::fmt::Debug::fmt(name, __formatter)?;
+                __formatter.write_str(",")?;
+                ::std::fmt::Debug::fmt(invoked, __formatter)?;
+                __formatter.write_str("}")
+            }
+        }
+    }
+}
+impl ::std::fmt::Debug for NonexistantFunction {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        ::std::fmt::Display::fmt(&self, f)
+    }
+}
+#[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
+pub struct OutOfScopeVar {
+    pub variable: crate::Ident,
+    pub used: crate::ExprId
+}
+impl abomonation::Abomonation for OutOfScopeVar{}
+::differential_datalog::decl_struct_from_record!(OutOfScopeVar["OutOfScopeVar"]<>, ["OutOfScopeVar"][2]{[0]variable["variable"]: crate::Ident, [1]used["used"]: crate::ExprId});
+::differential_datalog::decl_struct_into_record!(OutOfScopeVar, ["OutOfScopeVar"]<>, variable, used);
+::differential_datalog::decl_record_mutator_struct!(OutOfScopeVar, <>, variable: crate::Ident, used: crate::ExprId);
+impl ::std::fmt::Display for OutOfScopeVar {
+    fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        match self {
+            crate::OutOfScopeVar{variable,used} => {
+                __formatter.write_str("OutOfScopeVar{")?;
+                ::std::fmt::Debug::fmt(variable, __formatter)?;
+                __formatter.write_str(",")?;
+                ::std::fmt::Debug::fmt(used, __formatter)?;
+                __formatter.write_str("}")
+            }
+        }
+    }
+}
+impl ::std::fmt::Debug for OutOfScopeVar {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        ::std::fmt::Display::fmt(&self, f)
+    }
+}
 pub type Scope = u32;
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub enum Type {
@@ -1016,97 +535,46 @@ pub enum Type {
     Unknown,
     Func {
         args: crate::ddlog_std::Vec<crate::Type>,
-        ret: crate::ddlog_std::Ref<crate::Type>,
+        ret: crate::ddlog_std::Ref<crate::Type>
     },
+    Poison
 }
-impl abomonation::Abomonation for Type {}
-impl differential_datalog::record::FromRecord for Type {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Bool" if _args.is_empty() => Ok(crate::Type::Bool {}),
-                    "Int" if _args.is_empty() => Ok(crate::Type::Int {}),
-                    "String" if _args.is_empty() => Ok(crate::Type::String {}),
-                    "Unit" if _args.is_empty() => Ok(crate::Type::Unit {}),
-                    "Unknown" if _args.is_empty() => Ok(crate::Type::Unknown {}),
-                    "Func" if _args.len() == 2 => Ok(crate::Type::Func {
-                        args: <crate::ddlog_std::Vec<crate::Type>>::from_record(&_args[0])?,
-                        ret: <crate::ddlog_std::Ref<crate::Type>>::from_record(&_args[1])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Type in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Bool" => Ok(crate::Type::Bool {}),
-                    "Int" => Ok(crate::Type::Int {}),
-                    "String" => Ok(crate::Type::String {}),
-                    "Unit" => Ok(crate::Type::Unit {}),
-                    "Unknown" => Ok(crate::Type::Unknown {}),
-                    "Func" => Ok(crate::Type::Func {
-                        args: differential_datalog::record::arg_extract::<
-                            crate::ddlog_std::Vec<crate::Type>,
-                        >(_args, "args")?,
-                        ret: differential_datalog::record::arg_extract::<
-                            crate::ddlog_std::Ref<crate::Type>,
-                        >(_args, "ret")?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Type in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_enum_into_record!(Type, <>, Bool["Bool"]{}, Int["Int"]{}, String["String"]{}, Unit["Unit"]{}, Unknown["Unknown"]{}, Func["Func"]{args, ret});
-::differential_datalog::decl_record_mutator_enum!(Type, <>, Bool{}, Int{}, String{}, Unit{}, Unknown{}, Func{args: crate::ddlog_std::Vec<crate::Type>, ret: crate::ddlog_std::Ref<crate::Type>});
+impl abomonation::Abomonation for Type{}
+::differential_datalog::decl_enum_from_record!(Type["Type"]<>, Bool["Bool"][0]{}, Int["Int"][0]{}, String["String"][0]{}, Unit["Unit"][0]{}, Unknown["Unknown"][0]{}, Func["Func"][2]{[0]args["args"]: crate::ddlog_std::Vec<crate::Type>, [1]ret["ret"]: crate::ddlog_std::Ref<crate::Type>}, Poison["Poison"][0]{});
+::differential_datalog::decl_enum_into_record!(Type<>, Bool["Bool"]{}, Int["Int"]{}, String["String"]{}, Unit["Unit"]{}, Unknown["Unknown"]{}, Func["Func"]{args, ret}, Poison["Poison"]{});
+::differential_datalog::decl_record_mutator_enum!(Type<>, Bool{}, Int{}, String{}, Unit{}, Unknown{}, Func{args: crate::ddlog_std::Vec<crate::Type>, ret: crate::ddlog_std::Ref<crate::Type>}, Poison{});
 impl ::std::fmt::Display for Type {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::Type::Bool {} => {
+            crate::Type::Bool{} => {
                 __formatter.write_str("Bool{")?;
                 __formatter.write_str("}")
-            }
-            crate::Type::Int {} => {
+            },
+            crate::Type::Int{} => {
                 __formatter.write_str("Int{")?;
                 __formatter.write_str("}")
-            }
-            crate::Type::String {} => {
+            },
+            crate::Type::String{} => {
                 __formatter.write_str("String{")?;
                 __formatter.write_str("}")
-            }
-            crate::Type::Unit {} => {
+            },
+            crate::Type::Unit{} => {
                 __formatter.write_str("Unit{")?;
                 __formatter.write_str("}")
-            }
-            crate::Type::Unknown {} => {
+            },
+            crate::Type::Unknown{} => {
                 __formatter.write_str("Unknown{")?;
                 __formatter.write_str("}")
-            }
-            crate::Type::Func { args, ret } => {
+            },
+            crate::Type::Func{args,ret} => {
                 __formatter.write_str("Func{")?;
                 ::std::fmt::Debug::fmt(args, __formatter)?;
                 __formatter.write_str(",")?;
                 ::std::fmt::Debug::fmt(ret, __formatter)?;
+                __formatter.write_str("}")
+            },
+            crate::Type::Poison{} => {
+                __formatter.write_str("Poison{")?;
                 __formatter.write_str("}")
             }
         }
@@ -1119,73 +587,47 @@ impl ::std::fmt::Debug for Type {
 }
 impl ::std::default::Default for Type {
     fn default() -> Self {
-        crate::Type::Bool {}
+        crate::Type::Bool{}
+    }
+}
+#[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
+pub struct UninferedExpr {
+    pub expr: crate::ExprId
+}
+impl abomonation::Abomonation for UninferedExpr{}
+::differential_datalog::decl_struct_from_record!(UninferedExpr["UninferedExpr"]<>, ["UninferedExpr"][1]{[0]expr["expr"]: crate::ExprId});
+::differential_datalog::decl_struct_into_record!(UninferedExpr, ["UninferedExpr"]<>, expr);
+::differential_datalog::decl_record_mutator_struct!(UninferedExpr, <>, expr: crate::ExprId);
+impl ::std::fmt::Display for UninferedExpr {
+    fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        match self {
+            crate::UninferedExpr{expr} => {
+                __formatter.write_str("UninferedExpr{")?;
+                ::std::fmt::Debug::fmt(expr, __formatter)?;
+                __formatter.write_str("}")
+            }
+        }
+    }
+}
+impl ::std::fmt::Debug for UninferedExpr {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        ::std::fmt::Display::fmt(&self, f)
     }
 }
 #[derive(Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
 pub struct VarDecl {
     pub expr: crate::ExprId,
     pub name: crate::Ident,
-    pub val: crate::ExprId,
+    pub val: crate::ExprId
 }
-impl abomonation::Abomonation for VarDecl {}
-impl differential_datalog::record::FromRecord for VarDecl {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "VarDecl" if _args.len() == 3 => Ok(crate::VarDecl {
-                        expr: <crate::ExprId>::from_record(&_args[0])?,
-                        name: <crate::Ident>::from_record(&_args[1])?,
-                        val: <crate::ExprId>::from_record(&_args[2])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type VarDecl in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "VarDecl" => Ok(crate::VarDecl {
-                        expr: differential_datalog::record::arg_extract::<crate::ExprId>(
-                            _args, "expr",
-                        )?,
-                        name: differential_datalog::record::arg_extract::<crate::Ident>(
-                            _args, "name",
-                        )?,
-                        val: differential_datalog::record::arg_extract::<crate::ExprId>(
-                            _args, "val",
-                        )?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type VarDecl in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(VarDecl["VarDecl"]<>, expr, name, val);
+impl abomonation::Abomonation for VarDecl{}
+::differential_datalog::decl_struct_from_record!(VarDecl["VarDecl"]<>, ["VarDecl"][3]{[0]expr["expr"]: crate::ExprId, [1]name["name"]: crate::Ident, [2]val["val"]: crate::ExprId});
+::differential_datalog::decl_struct_into_record!(VarDecl, ["VarDecl"]<>, expr, name, val);
 ::differential_datalog::decl_record_mutator_struct!(VarDecl, <>, expr: crate::ExprId, name: crate::Ident, val: crate::ExprId);
 impl ::std::fmt::Display for VarDecl {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::VarDecl { expr, name, val } => {
+            crate::VarDecl{expr,name,val} => {
                 __formatter.write_str("VarDecl{")?;
                 ::std::fmt::Debug::fmt(expr, __formatter)?;
                 __formatter.write_str(",")?;
@@ -1206,64 +648,16 @@ impl ::std::fmt::Debug for VarDecl {
 pub struct Variable {
     pub scope: crate::Scope,
     pub name: crate::Ident,
-    pub ty: crate::Type,
+    pub ty: crate::Type
 }
-impl abomonation::Abomonation for Variable {}
-impl differential_datalog::record::FromRecord for Variable {
-    fn from_record(
-        val: &differential_datalog::record::Record,
-    ) -> ::std::result::Result<Self, String> {
-        match val {
-            differential_datalog::record::Record::PosStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Variable" if _args.len() == 3 => Ok(crate::Variable {
-                        scope: <crate::Scope>::from_record(&_args[0])?,
-                        name: <crate::Ident>::from_record(&_args[1])?,
-                        ty: <crate::Type>::from_record(&_args[2])?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Variable in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::NamedStruct(constr, _args) => {
-                match constr.as_ref() {
-                    "Variable" => Ok(crate::Variable {
-                        scope: differential_datalog::record::arg_extract::<crate::Scope>(
-                            _args, "scope",
-                        )?,
-                        name: differential_datalog::record::arg_extract::<crate::Ident>(
-                            _args, "name",
-                        )?,
-                        ty: differential_datalog::record::arg_extract::<crate::Type>(_args, "ty")?,
-                    }),
-                    c => ::std::result::Result::Err(format!(
-                        "unknown constructor {} of type Variable in {:?}",
-                        c, *val
-                    )),
-                }
-            }
-            differential_datalog::record::Record::Serialized(format, s) => {
-                if format == "json" {
-                    serde_json::from_str(&*s).map_err(|e| format!("{}", e))
-                } else {
-                    ::std::result::Result::Err(format!(
-                        "unsupported serialization format '{}'",
-                        format
-                    ))
-                }
-            }
-            v => ::std::result::Result::Err(format!("not a struct {:?}", *v)),
-        }
-    }
-}
-::differential_datalog::decl_struct_into_record!(Variable["Variable"]<>, scope, name, ty);
+impl abomonation::Abomonation for Variable{}
+::differential_datalog::decl_struct_from_record!(Variable["Variable"]<>, ["Variable"][3]{[0]scope["scope"]: crate::Scope, [1]name["name"]: crate::Ident, [2]ty["ty"]: crate::Type});
+::differential_datalog::decl_struct_into_record!(Variable, ["Variable"]<>, scope, name, ty);
 ::differential_datalog::decl_record_mutator_struct!(Variable, <>, scope: crate::Scope, name: crate::Ident, ty: crate::Type);
 impl ::std::fmt::Display for Variable {
     fn fmt(&self, __formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match self {
-            crate::Variable { scope, name, ty } => {
+            crate::Variable{scope,name,ty} => {
                 __formatter.write_str("Variable{")?;
                 ::std::fmt::Debug::fmt(scope, __formatter)?;
                 __formatter.write_str(",")?;
@@ -1280,10 +674,10 @@ impl ::std::fmt::Debug for Variable {
         ::std::fmt::Display::fmt(&self, f)
     }
 }
-pub fn type_of(lit: &crate::Lit) -> crate::Type {
-    match (*lit) {
-        crate::Lit::LitInt { i: _ } => (crate::Type::Int {}),
-        crate::Lit::LitBool { b: _ } => (crate::Type::Bool {}),
-        crate::Lit::LitStr { s: _ } => (crate::Type::String {}),
+pub fn type_of(lit: & crate::Lit) -> crate::Type
+{   match (*lit) {
+        crate::Lit::LitInt{i: _} => (crate::Type::Int{}),
+        crate::Lit::LitBool{b: _} => (crate::Type::Bool{}),
+        crate::Lit::LitStr{s: _} => (crate::Type::String{})
     }
 }

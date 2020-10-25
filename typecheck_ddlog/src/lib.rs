@@ -179,28 +179,8 @@ macro_rules! decl_update_deserializer {
     };
 }
 
-decl_update_deserializer!(
-    UpdateSerializer,
-    (0, Value::Application),
-    (1, Value::ApplicationArg),
-    (2, Value::ChildScope),
-    (3, Value::Expression),
-    (4, Value::ExpressionType),
-    (5, Value::FuncArg),
-    (6, Value::Function),
-    (7, Value::Application),
-    (8, Value::ApplicationArg),
-    (9, Value::Expression),
-    (10, Value::FuncArg),
-    (11, Value::Function),
-    (12, Value::InputScope),
-    (13, Value::Literal),
-    (14, Value::VarDecl),
-    (15, Value::InputScope),
-    (16, Value::Literal),
-    (17, Value::VarDecl),
-    (18, Value::Variable)
-);
+
+decl_update_deserializer!(UpdateSerializer,(0, Value::Application), (1, Value::ApplicationArg), (2, Value::ChildScope), (3, Value::Expression), (4, Value::ExpressionType), (5, Value::FuncArg), (6, Value::Function), (7, Value::Application), (8, Value::ApplicationArg), (9, Value::Expression), (10, Value::FuncArg), (11, Value::Function), (12, Value::InputScope), (13, Value::Literal), (14, Value::VarDecl), (15, Value::InputScope), (16, Value::Literal), (17, Value::NonexistantFunction), (18, Value::OutOfScopeVar), (19, Value::UninferedExpr), (20, Value::VarDecl), (21, Value::Variable));
 pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
     let Application = Relation {
                           name:         "Application".to_string(),
@@ -224,88 +204,95 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                                   }
                                   __f},
                                   queryable: false
+                              },
+                              Arrangement::Map{
+                                 name: r###"(Application{.expr=(_: bit<32>), .func=(_0: bit<32>)}: Application) /*join*/"###.to_string(),
+                                  afun: &{fn __f(__v: DDValue) -> Option<(DDValue,DDValue)>
+                                  {
+                                      let __cloned = __v.clone();
+                                      match unsafe { Value::Application::from_ddvalue(__v) }.0 {
+                                          ::types::Application{expr: _, func: ref _0} => Some(Value::__Bitval32((*_0).clone()).into_ddvalue()),
+                                          _ => None
+                                      }.map(|x|(x,__cloned))
+                                  }
+                                  __f},
+                                  queryable: false
                               }],
                           change_cb:    None
                       };
     let INPUT_Application = Relation {
-        name: "INPUT_Application".to_string(),
-        input: false,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::INPUT_Application as RelId,
-        rules: vec![
-            /* INPUT_Application[x] :- Application[(x: Application)]. */
-            Rule::CollectionRule {
-                description: "INPUT_Application[x] :- Application[(x: Application)].".to_string(),
-                rel: Relations::Application as RelId,
-                xform: Some(XFormCollection::FilterMap {
-                    description: "head of INPUT_Application[x] :- Application[(x: Application)]."
-                        .to_string(),
-                    fmfun: &{
-                        fn __f(__v: DDValue) -> Option<DDValue> {
-                            let ref x =
-                                match unsafe { Value::Application::from_ddvalue_ref(&__v) }.0 {
-                                    ref x => (*x).clone(),
-                                    _ => return None,
-                                };
-                            Some(Value::Application((*x).clone()).into_ddvalue())
-                        }
-                        __f
-                    },
-                    next: Box::new(None),
-                }),
-            },
-        ],
-        arrangements: vec![],
-        change_cb: Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone()))),
-    };
+                                name:         "INPUT_Application".to_string(),
+                                input:        false,
+                                distinct:     false,
+                                caching_mode: CachingMode::Set,
+                                key_func:     None,
+                                id:           Relations::INPUT_Application as RelId,
+                                rules:        vec![
+                                    /* INPUT_Application[x] :- Application[(x: Application)]. */
+                                    Rule::CollectionRule {
+                                        description: "INPUT_Application[x] :- Application[(x: Application)].".to_string(),
+                                        rel: Relations::Application as RelId,
+                                        xform: Some(XFormCollection::FilterMap{
+                                                        description: "head of INPUT_Application[x] :- Application[(x: Application)]." .to_string(),
+                                                        fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                        {
+                                                            let ref x = match unsafe {  Value::Application::from_ddvalue_ref(&__v) }.0 {
+                                                                ref x => (*x).clone(),
+                                                                _ => return None
+                                                            };
+                                                            Some(Value::Application((*x).clone()).into_ddvalue())
+                                                        }
+                                                        __f},
+                                                        next: Box::new(None)
+                                                    })
+                                    }],
+                                arrangements: vec![
+                                    ],
+                                change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                            };
     let ApplicationArg = Relation {
-        name: "ApplicationArg".to_string(),
-        input: true,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::ApplicationArg as RelId,
-        rules: vec![],
-        arrangements: vec![],
-        change_cb: None,
-    };
+                             name:         "ApplicationArg".to_string(),
+                             input:        true,
+                             distinct:     false,
+                             caching_mode: CachingMode::Set,
+                             key_func:     None,
+                             id:           Relations::ApplicationArg as RelId,
+                             rules:        vec![
+                                 ],
+                             arrangements: vec![
+                                 ],
+                             change_cb:    None
+                         };
     let INPUT_ApplicationArg = Relation {
-        name: "INPUT_ApplicationArg".to_string(),
-        input: false,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::INPUT_ApplicationArg as RelId,
-        rules: vec![
-            /* INPUT_ApplicationArg[x] :- ApplicationArg[(x: ApplicationArg)]. */
-            Rule::CollectionRule {
-                description: "INPUT_ApplicationArg[x] :- ApplicationArg[(x: ApplicationArg)]."
-                    .to_string(),
-                rel: Relations::ApplicationArg as RelId,
-                xform: Some(XFormCollection::FilterMap {
-                    description:
-                        "head of INPUT_ApplicationArg[x] :- ApplicationArg[(x: ApplicationArg)]."
-                            .to_string(),
-                    fmfun: &{
-                        fn __f(__v: DDValue) -> Option<DDValue> {
-                            let ref x =
-                                match unsafe { Value::ApplicationArg::from_ddvalue_ref(&__v) }.0 {
-                                    ref x => (*x).clone(),
-                                    _ => return None,
-                                };
-                            Some(Value::ApplicationArg((*x).clone()).into_ddvalue())
-                        }
-                        __f
-                    },
-                    next: Box::new(None),
-                }),
-            },
-        ],
-        arrangements: vec![],
-        change_cb: Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone()))),
-    };
+                                   name:         "INPUT_ApplicationArg".to_string(),
+                                   input:        false,
+                                   distinct:     false,
+                                   caching_mode: CachingMode::Set,
+                                   key_func:     None,
+                                   id:           Relations::INPUT_ApplicationArg as RelId,
+                                   rules:        vec![
+                                       /* INPUT_ApplicationArg[x] :- ApplicationArg[(x: ApplicationArg)]. */
+                                       Rule::CollectionRule {
+                                           description: "INPUT_ApplicationArg[x] :- ApplicationArg[(x: ApplicationArg)].".to_string(),
+                                           rel: Relations::ApplicationArg as RelId,
+                                           xform: Some(XFormCollection::FilterMap{
+                                                           description: "head of INPUT_ApplicationArg[x] :- ApplicationArg[(x: ApplicationArg)]." .to_string(),
+                                                           fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                           {
+                                                               let ref x = match unsafe {  Value::ApplicationArg::from_ddvalue_ref(&__v) }.0 {
+                                                                   ref x => (*x).clone(),
+                                                                   _ => return None
+                                                               };
+                                                               Some(Value::ApplicationArg((*x).clone()).into_ddvalue())
+                                                           }
+                                                           __f},
+                                                           next: Box::new(None)
+                                                       })
+                                       }],
+                                   arrangements: vec![
+                                       ],
+                                   change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                               };
     let Expression = Relation {
                          name:         "Expression".to_string(),
                          input:        true,
@@ -316,6 +303,19 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                          rules:        vec![
                              ],
                          arrangements: vec![
+                             Arrangement::Map{
+                                name: r###"(Expression{.id=(_: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(_1: internment::Intern<string>)}: ExprKind), .scope=(_0: bit<32>)}: Expression) /*join*/"###.to_string(),
+                                 afun: &{fn __f(__v: DDValue) -> Option<(DDValue,DDValue)>
+                                 {
+                                     let __cloned = __v.clone();
+                                     match unsafe { Value::Expression::from_ddvalue(__v) }.0 {
+                                         ::types::Expression{id: _, func: _, kind: ::types::ExprKind::Var{v: ref _1}, scope: ref _0} => Some(Value::__Tuple2____Bitval32_internment_Intern____Stringval(((*_0).clone(), (*_1).clone())).into_ddvalue()),
+                                         _ => None
+                                     }.map(|x|(x,__cloned))
+                                 }
+                                 __f},
+                                 queryable: false
+                             },
                              Arrangement::Map{
                                 name: r###"(Expression{.id=(_0: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(_: internment::Intern<string>)}: ExprKind), .scope=(_: bit<32>)}: Expression) /*join*/"###.to_string(),
                                  afun: &{fn __f(__v: DDValue) -> Option<(DDValue,DDValue)>
@@ -344,39 +344,72 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                              }],
                          change_cb:    None
                      };
+    let NonexistantFunction = Relation {
+                                  name:         "NonexistantFunction".to_string(),
+                                  input:        false,
+                                  distinct:     true,
+                                  caching_mode: CachingMode::Set,
+                                  key_func:     None,
+                                  id:           Relations::NonexistantFunction as RelId,
+                                  rules:        vec![
+                                      /* NonexistantFunction[(NonexistantFunction{.name=name, .invoked=invoked}: NonexistantFunction)] :- Application[(Application{.expr=(invoked: bit<32>), .func=(func: bit<32>)}: Application)], Expression[(Expression{.id=(func: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(name: internment::Intern<string>)}: ExprKind), .scope=(_: bit<32>)}: Expression)]. */
+                                      Rule::ArrangementRule {
+                                          description: "NonexistantFunction[(NonexistantFunction{.name=name, .invoked=invoked}: NonexistantFunction)] :- Application[(Application{.expr=(invoked: bit<32>), .func=(func: bit<32>)}: Application)], Expression[(Expression{.id=(func: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(name: internment::Intern<string>)}: ExprKind), .scope=(_: bit<32>)}: Expression)].".to_string(),
+                                          arr: ( Relations::Application as RelId, 1),
+                                          xform: XFormArrangement::Join{
+                                                     description: "Application[(Application{.expr=(invoked: bit<32>), .func=(func: bit<32>)}: Application)], Expression[(Expression{.id=(func: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(name: internment::Intern<string>)}: ExprKind), .scope=(_: bit<32>)}: Expression)]".to_string(),
+                                                     ffun: None,
+                                                     arrangement: (Relations::Expression as RelId,1),
+                                                     jfun: &{fn __f(_: &DDValue ,__v1: &DDValue,__v2: &DDValue) -> Option<DDValue>
+                                                     {
+                                                         let (ref invoked, ref func) = match unsafe {  Value::Application::from_ddvalue_ref(__v1) }.0 {
+                                                             ::types::Application{expr: ref invoked, func: ref func} => ((*invoked).clone(), (*func).clone()),
+                                                             _ => return None
+                                                         };
+                                                         let ref name = match unsafe {  Value::Expression::from_ddvalue_ref(__v2) }.0 {
+                                                             ::types::Expression{id: _, func: _, kind: ::types::ExprKind::Var{v: ref name}, scope: _} => (*name).clone(),
+                                                             _ => return None
+                                                         };
+                                                         Some(Value::NonexistantFunction((::types::NonexistantFunction{name: (*name).clone(), invoked: (*invoked).clone()})).into_ddvalue())
+                                                     }
+                                                     __f},
+                                                     next: Box::new(None)
+                                                 }
+                                      }],
+                                  arrangements: vec![
+                                      ],
+                                  change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                              };
     let INPUT_Expression = Relation {
-        name: "INPUT_Expression".to_string(),
-        input: false,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::INPUT_Expression as RelId,
-        rules: vec![
-            /* INPUT_Expression[x] :- Expression[(x: Expression)]. */
-            Rule::CollectionRule {
-                description: "INPUT_Expression[x] :- Expression[(x: Expression)].".to_string(),
-                rel: Relations::Expression as RelId,
-                xform: Some(XFormCollection::FilterMap {
-                    description: "head of INPUT_Expression[x] :- Expression[(x: Expression)]."
-                        .to_string(),
-                    fmfun: &{
-                        fn __f(__v: DDValue) -> Option<DDValue> {
-                            let ref x = match unsafe { Value::Expression::from_ddvalue_ref(&__v) }.0
-                            {
-                                ref x => (*x).clone(),
-                                _ => return None,
-                            };
-                            Some(Value::Expression((*x).clone()).into_ddvalue())
-                        }
-                        __f
-                    },
-                    next: Box::new(None),
-                }),
-            },
-        ],
-        arrangements: vec![],
-        change_cb: Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone()))),
-    };
+                               name:         "INPUT_Expression".to_string(),
+                               input:        false,
+                               distinct:     false,
+                               caching_mode: CachingMode::Set,
+                               key_func:     None,
+                               id:           Relations::INPUT_Expression as RelId,
+                               rules:        vec![
+                                   /* INPUT_Expression[x] :- Expression[(x: Expression)]. */
+                                   Rule::CollectionRule {
+                                       description: "INPUT_Expression[x] :- Expression[(x: Expression)].".to_string(),
+                                       rel: Relations::Expression as RelId,
+                                       xform: Some(XFormCollection::FilterMap{
+                                                       description: "head of INPUT_Expression[x] :- Expression[(x: Expression)]." .to_string(),
+                                                       fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                       {
+                                                           let ref x = match unsafe {  Value::Expression::from_ddvalue_ref(&__v) }.0 {
+                                                               ref x => (*x).clone(),
+                                                               _ => return None
+                                                           };
+                                                           Some(Value::Expression((*x).clone()).into_ddvalue())
+                                                       }
+                                                       __f},
+                                                       next: Box::new(None)
+                                                   })
+                                   }],
+                               arrangements: vec![
+                                   ],
+                               change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                           };
     let FuncArg = Relation {
                       name:         "FuncArg".to_string(),
                       input:        true,
@@ -403,36 +436,35 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                       change_cb:    None
                   };
     let INPUT_FuncArg = Relation {
-        name: "INPUT_FuncArg".to_string(),
-        input: false,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::INPUT_FuncArg as RelId,
-        rules: vec![
-            /* INPUT_FuncArg[x] :- FuncArg[(x: FuncArg)]. */
-            Rule::CollectionRule {
-                description: "INPUT_FuncArg[x] :- FuncArg[(x: FuncArg)].".to_string(),
-                rel: Relations::FuncArg as RelId,
-                xform: Some(XFormCollection::FilterMap {
-                    description: "head of INPUT_FuncArg[x] :- FuncArg[(x: FuncArg)].".to_string(),
-                    fmfun: &{
-                        fn __f(__v: DDValue) -> Option<DDValue> {
-                            let ref x = match unsafe { Value::FuncArg::from_ddvalue_ref(&__v) }.0 {
-                                ref x => (*x).clone(),
-                                _ => return None,
-                            };
-                            Some(Value::FuncArg((*x).clone()).into_ddvalue())
-                        }
-                        __f
-                    },
-                    next: Box::new(None),
-                }),
-            },
-        ],
-        arrangements: vec![],
-        change_cb: Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone()))),
-    };
+                            name:         "INPUT_FuncArg".to_string(),
+                            input:        false,
+                            distinct:     false,
+                            caching_mode: CachingMode::Set,
+                            key_func:     None,
+                            id:           Relations::INPUT_FuncArg as RelId,
+                            rules:        vec![
+                                /* INPUT_FuncArg[x] :- FuncArg[(x: FuncArg)]. */
+                                Rule::CollectionRule {
+                                    description: "INPUT_FuncArg[x] :- FuncArg[(x: FuncArg)].".to_string(),
+                                    rel: Relations::FuncArg as RelId,
+                                    xform: Some(XFormCollection::FilterMap{
+                                                    description: "head of INPUT_FuncArg[x] :- FuncArg[(x: FuncArg)]." .to_string(),
+                                                    fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                    {
+                                                        let ref x = match unsafe {  Value::FuncArg::from_ddvalue_ref(&__v) }.0 {
+                                                            ref x => (*x).clone(),
+                                                            _ => return None
+                                                        };
+                                                        Some(Value::FuncArg((*x).clone()).into_ddvalue())
+                                                    }
+                                                    __f},
+                                                    next: Box::new(None)
+                                                })
+                                }],
+                            arrangements: vec![
+                                ],
+                            change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                        };
     let Function = Relation {
                        name:         "Function".to_string(),
                        input:        true,
@@ -459,48 +491,48 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                        change_cb:    None
                    };
     let INPUT_Function = Relation {
-        name: "INPUT_Function".to_string(),
-        input: false,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::INPUT_Function as RelId,
-        rules: vec![
-            /* INPUT_Function[x] :- Function[(x: Function)]. */
-            Rule::CollectionRule {
-                description: "INPUT_Function[x] :- Function[(x: Function)].".to_string(),
-                rel: Relations::Function as RelId,
-                xform: Some(XFormCollection::FilterMap {
-                    description: "head of INPUT_Function[x] :- Function[(x: Function)]."
-                        .to_string(),
-                    fmfun: &{
-                        fn __f(__v: DDValue) -> Option<DDValue> {
-                            let ref x = match unsafe { Value::Function::from_ddvalue_ref(&__v) }.0 {
-                                ref x => (*x).clone(),
-                                _ => return None,
-                            };
-                            Some(Value::Function((*x).clone()).into_ddvalue())
-                        }
-                        __f
-                    },
-                    next: Box::new(None),
-                }),
-            },
-        ],
-        arrangements: vec![],
-        change_cb: Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone()))),
-    };
+                             name:         "INPUT_Function".to_string(),
+                             input:        false,
+                             distinct:     false,
+                             caching_mode: CachingMode::Set,
+                             key_func:     None,
+                             id:           Relations::INPUT_Function as RelId,
+                             rules:        vec![
+                                 /* INPUT_Function[x] :- Function[(x: Function)]. */
+                                 Rule::CollectionRule {
+                                     description: "INPUT_Function[x] :- Function[(x: Function)].".to_string(),
+                                     rel: Relations::Function as RelId,
+                                     xform: Some(XFormCollection::FilterMap{
+                                                     description: "head of INPUT_Function[x] :- Function[(x: Function)]." .to_string(),
+                                                     fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                     {
+                                                         let ref x = match unsafe {  Value::Function::from_ddvalue_ref(&__v) }.0 {
+                                                             ref x => (*x).clone(),
+                                                             _ => return None
+                                                         };
+                                                         Some(Value::Function((*x).clone()).into_ddvalue())
+                                                     }
+                                                     __f},
+                                                     next: Box::new(None)
+                                                 })
+                                 }],
+                             arrangements: vec![
+                                 ],
+                             change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                         };
     let InputScope = Relation {
-        name: "InputScope".to_string(),
-        input: true,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::InputScope as RelId,
-        rules: vec![],
-        arrangements: vec![],
-        change_cb: None,
-    };
+                         name:         "InputScope".to_string(),
+                         input:        true,
+                         distinct:     false,
+                         caching_mode: CachingMode::Set,
+                         key_func:     None,
+                         id:           Relations::InputScope as RelId,
+                         rules:        vec![
+                             ],
+                         arrangements: vec![
+                             ],
+                         change_cb:    None
+                     };
     let ChildScope = Relation {
                          name:         "ChildScope".to_string(),
                          input:        false,
@@ -581,80 +613,78 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                          change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
                      };
     let INPUT_InputScope = Relation {
-        name: "INPUT_InputScope".to_string(),
-        input: false,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::INPUT_InputScope as RelId,
-        rules: vec![
-            /* INPUT_InputScope[x] :- InputScope[(x: InputScope)]. */
-            Rule::CollectionRule {
-                description: "INPUT_InputScope[x] :- InputScope[(x: InputScope)].".to_string(),
-                rel: Relations::InputScope as RelId,
-                xform: Some(XFormCollection::FilterMap {
-                    description: "head of INPUT_InputScope[x] :- InputScope[(x: InputScope)]."
-                        .to_string(),
-                    fmfun: &{
-                        fn __f(__v: DDValue) -> Option<DDValue> {
-                            let ref x = match unsafe { Value::InputScope::from_ddvalue_ref(&__v) }.0
-                            {
-                                ref x => (*x).clone(),
-                                _ => return None,
-                            };
-                            Some(Value::InputScope((*x).clone()).into_ddvalue())
-                        }
-                        __f
-                    },
-                    next: Box::new(None),
-                }),
-            },
-        ],
-        arrangements: vec![],
-        change_cb: Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone()))),
-    };
+                               name:         "INPUT_InputScope".to_string(),
+                               input:        false,
+                               distinct:     false,
+                               caching_mode: CachingMode::Set,
+                               key_func:     None,
+                               id:           Relations::INPUT_InputScope as RelId,
+                               rules:        vec![
+                                   /* INPUT_InputScope[x] :- InputScope[(x: InputScope)]. */
+                                   Rule::CollectionRule {
+                                       description: "INPUT_InputScope[x] :- InputScope[(x: InputScope)].".to_string(),
+                                       rel: Relations::InputScope as RelId,
+                                       xform: Some(XFormCollection::FilterMap{
+                                                       description: "head of INPUT_InputScope[x] :- InputScope[(x: InputScope)]." .to_string(),
+                                                       fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                       {
+                                                           let ref x = match unsafe {  Value::InputScope::from_ddvalue_ref(&__v) }.0 {
+                                                               ref x => (*x).clone(),
+                                                               _ => return None
+                                                           };
+                                                           Some(Value::InputScope((*x).clone()).into_ddvalue())
+                                                       }
+                                                       __f},
+                                                       next: Box::new(None)
+                                                   })
+                                   }],
+                               arrangements: vec![
+                                   ],
+                               change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                           };
     let Literal = Relation {
-        name: "Literal".to_string(),
-        input: true,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::Literal as RelId,
-        rules: vec![],
-        arrangements: vec![],
-        change_cb: None,
-    };
+                      name:         "Literal".to_string(),
+                      input:        true,
+                      distinct:     false,
+                      caching_mode: CachingMode::Set,
+                      key_func:     None,
+                      id:           Relations::Literal as RelId,
+                      rules:        vec![
+                          ],
+                      arrangements: vec![
+                          ],
+                      change_cb:    None
+                  };
     let INPUT_Literal = Relation {
-        name: "INPUT_Literal".to_string(),
-        input: false,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::INPUT_Literal as RelId,
-        rules: vec![
-            /* INPUT_Literal[x] :- Literal[(x: Literal)]. */
-            Rule::CollectionRule {
-                description: "INPUT_Literal[x] :- Literal[(x: Literal)].".to_string(),
-                rel: Relations::Literal as RelId,
-                xform: Some(XFormCollection::FilterMap {
-                    description: "head of INPUT_Literal[x] :- Literal[(x: Literal)].".to_string(),
-                    fmfun: &{
-                        fn __f(__v: DDValue) -> Option<DDValue> {
-                            let ref x = match unsafe { Value::Literal::from_ddvalue_ref(&__v) }.0 {
-                                ref x => (*x).clone(),
-                                _ => return None,
-                            };
-                            Some(Value::Literal((*x).clone()).into_ddvalue())
-                        }
-                        __f
-                    },
-                    next: Box::new(None),
-                }),
-            },
-        ],
-        arrangements: vec![],
-        change_cb: Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone()))),
-    };
+                            name:         "INPUT_Literal".to_string(),
+                            input:        false,
+                            distinct:     false,
+                            caching_mode: CachingMode::Set,
+                            key_func:     None,
+                            id:           Relations::INPUT_Literal as RelId,
+                            rules:        vec![
+                                /* INPUT_Literal[x] :- Literal[(x: Literal)]. */
+                                Rule::CollectionRule {
+                                    description: "INPUT_Literal[x] :- Literal[(x: Literal)].".to_string(),
+                                    rel: Relations::Literal as RelId,
+                                    xform: Some(XFormCollection::FilterMap{
+                                                    description: "head of INPUT_Literal[x] :- Literal[(x: Literal)]." .to_string(),
+                                                    fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                    {
+                                                        let ref x = match unsafe {  Value::Literal::from_ddvalue_ref(&__v) }.0 {
+                                                            ref x => (*x).clone(),
+                                                            _ => return None
+                                                        };
+                                                        Some(Value::Literal((*x).clone()).into_ddvalue())
+                                                    }
+                                                    __f},
+                                                    next: Box::new(None)
+                                                })
+                                }],
+                            arrangements: vec![
+                                ],
+                            change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                        };
     let VarDecl = Relation {
                       name:         "VarDecl".to_string(),
                       input:        true,
@@ -747,6 +777,30 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                                                 next: Box::new(None)
                                             }
                                  },
+                                 /* ExpressionType[(ExpressionType{.expr=expr, .ty=ty}: ExpressionType)] :- Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(v: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], Variable[(Variable{.scope=(scope: bit<32>), .name=(v: internment::Intern<string>), .ty=(ty: Type)}: Variable)]. */
+                                 Rule::ArrangementRule {
+                                     description: "ExpressionType[(ExpressionType{.expr=expr, .ty=ty}: ExpressionType)] :- Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(v: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], Variable[(Variable{.scope=(scope: bit<32>), .name=(v: internment::Intern<string>), .ty=(ty: Type)}: Variable)].".to_string(),
+                                     arr: ( Relations::Expression as RelId, 0),
+                                     xform: XFormArrangement::Join{
+                                                description: "Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(v: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], Variable[(Variable{.scope=(scope: bit<32>), .name=(v: internment::Intern<string>), .ty=(ty: Type)}: Variable)]".to_string(),
+                                                ffun: None,
+                                                arrangement: (Relations::Variable as RelId,0),
+                                                jfun: &{fn __f(_: &DDValue ,__v1: &DDValue,__v2: &DDValue) -> Option<DDValue>
+                                                {
+                                                    let (ref expr, ref v, ref scope) = match unsafe {  Value::Expression::from_ddvalue_ref(__v1) }.0 {
+                                                        ::types::Expression{id: ref expr, func: _, kind: ::types::ExprKind::Var{v: ref v}, scope: ref scope} => ((*expr).clone(), (*v).clone(), (*scope).clone()),
+                                                        _ => return None
+                                                    };
+                                                    let ref ty = match unsafe {  Value::Variable::from_ddvalue_ref(__v2) }.0 {
+                                                        ::types::Variable{scope: _, name: _, ty: ref ty} => (*ty).clone(),
+                                                        _ => return None
+                                                    };
+                                                    Some(Value::ExpressionType((::types::ExpressionType{expr: (*expr).clone(), ty: (*ty).clone()})).into_ddvalue())
+                                                }
+                                                __f},
+                                                next: Box::new(None)
+                                            }
+                                 },
                                  /* ExpressionType[(ExpressionType{.expr=expr, .ty=ty}: ExpressionType)] :- Application[(Application{.expr=(expr: bit<32>), .func=(func: bit<32>)}: Application)], Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(name: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], Variable[(Variable{.scope=(scope: bit<32>), .name=(name: internment::Intern<string>), .ty=(Func{.args=(_: ddlog_std::Vec<Type>), .ret=(ret: ddlog_std::Ref<Type>)}: Type)}: Variable)], ((var ty: Type) = ((ddlog_std::deref: function(ddlog_std::Ref<Type>):Type)(ret))). */
                                  Rule::ArrangementRule {
                                      description: "ExpressionType[(ExpressionType{.expr=expr, .ty=ty}: ExpressionType)] :- Application[(Application{.expr=(expr: bit<32>), .func=(func: bit<32>)}: Application)], Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(name: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], Variable[(Variable{.scope=(scope: bit<32>), .name=(name: internment::Intern<string>), .ty=(Func{.args=(_: ddlog_std::Vec<Type>), .ret=(ret: ddlog_std::Ref<Type>)}: Type)}: Variable)], ((var ty: Type) = ((ddlog_std::deref: function(ddlog_std::Ref<Type>):Type)(ret))).".to_string(),
@@ -754,7 +808,7 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                                      xform: XFormArrangement::Join{
                                                 description: "Application[(Application{.expr=(expr: bit<32>), .func=(func: bit<32>)}: Application)], Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(name: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)]".to_string(),
                                                 ffun: None,
-                                                arrangement: (Relations::Expression as RelId,0),
+                                                arrangement: (Relations::Expression as RelId,1),
                                                 jfun: &{fn __f(_: &DDValue ,__v1: &DDValue,__v2: &DDValue) -> Option<DDValue>
                                                 {
                                                     let (ref expr, ref func) = match unsafe {  Value::Application::from_ddvalue_ref(__v1) }.0 {
@@ -779,7 +833,7 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                                                                         next: Box::new(XFormArrangement::Join{
                                                                                            description: "Application[(Application{.expr=(expr: bit<32>), .func=(func: bit<32>)}: Application)], Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(name: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], Variable[(Variable{.scope=(scope: bit<32>), .name=(name: internment::Intern<string>), .ty=(Func{.args=(_: ddlog_std::Vec<Type>), .ret=(ret: ddlog_std::Ref<Type>)}: Type)}: Variable)]".to_string(),
                                                                                            ffun: None,
-                                                                                           arrangement: (Relations::Variable as RelId,0),
+                                                                                           arrangement: (Relations::Variable as RelId,1),
                                                                                            jfun: &{fn __f(_: &DDValue ,__v1: &DDValue,__v2: &DDValue) -> Option<DDValue>
                                                                                            {
                                                                                                let ref expr = unsafe { Value::__Bitval32::from_ddvalue_ref( __v1 ) }.0;
@@ -812,6 +866,30 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                                      }
                                      __f},
                                      queryable: false
+                                 },
+                                 Arrangement::Set{
+                                     name: r###"(ExpressionType{.expr=(_0: bit<32>), .ty=(_: Type)}: ExpressionType) /*antijoin*/"###.to_string(),
+                                     fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                     {
+                                         match unsafe { Value::ExpressionType::from_ddvalue(__v) }.0 {
+                                             ::types::ExpressionType{expr: ref _0, ty: _} => Some(Value::__Bitval32((*_0).clone()).into_ddvalue()),
+                                             _ => None
+                                         }
+                                     }
+                                     __f},
+                                     distinct: true
+                                 },
+                                 Arrangement::Set{
+                                     name: r###"(ExpressionType{.expr=(_0: bit<32>), .ty=(Poison{}: Type)}: ExpressionType) /*semijoin*/"###.to_string(),
+                                     fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                     {
+                                         match unsafe { Value::ExpressionType::from_ddvalue(__v) }.0 {
+                                             ::types::ExpressionType{expr: ref _0, ty: ::types::Type::Poison{}} => Some(Value::__Bitval32((*_0).clone()).into_ddvalue()),
+                                             _ => None
+                                         }
+                                     }
+                                     __f},
+                                     distinct: false
                                  }],
                              change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
                          };
@@ -830,7 +908,7 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                                xform: XFormArrangement::Join{
                                           description: "VarDecl[(VarDecl{.expr=(expr: bit<32>), .name=(name: internment::Intern<string>), .val=(val: bit<32>)}: VarDecl)], Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(_: ExprKind), .scope=(scope: bit<32>)}: Expression)]".to_string(),
                                           ffun: None,
-                                          arrangement: (Relations::Expression as RelId,1),
+                                          arrangement: (Relations::Expression as RelId,2),
                                           jfun: &{fn __f(_: &DDValue ,__v1: &DDValue,__v2: &DDValue) -> Option<DDValue>
                                           {
                                               let (ref expr, ref name, ref val) = match unsafe {  Value::VarDecl::from_ddvalue_ref(__v1) }.0 {
@@ -871,9 +949,9 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                                                               }))
                                       }
                            },
-                           /* Variable[(Variable{.scope=scope, .name=name, .ty=ty}: Variable)] :- Function[(Function{.name=(name: internment::Intern<string>), .id=(func: bit<32>), .scope=(scope: bit<32>), .ret=(func_ret: ddlog_std::Option<Type>)}: Function)], ((var ret: ddlog_std::Ref<Type>) = ((ddlog_std::ref_new: function(Type):ddlog_std::Ref<Type>)(((ddlog_std::unwrap_or: function(ddlog_std::Option<Type>, Type):Type)(func_ret, (Unknown{}: Type)))))), FuncArg[(FuncArg{.func=(func: bit<32>), .name=(_: internment::Intern<string>), .ty=(ty: Type)}: FuncArg)], var args = Aggregate((func, ret, scope, name), ddlog_std::group_to_vec(ty)), ((var ty: Type) = (Func{.args=args, .ret=ret}: Type)). */
+                           /* Variable[(Variable{.scope=scope, .name=name, .ty=ty}: Variable)] :- Function[(Function{.name=(name: internment::Intern<string>), .id=(func: bit<32>), .scope=(scope: bit<32>), .ret=(func_ret: ddlog_std::Option<Type>)}: Function)], ((var ret: ddlog_std::Ref<Type>) = ((ddlog_std::ref_new: function(Type):ddlog_std::Ref<Type>)(((ddlog_std::unwrap_or: function(ddlog_std::Option<Type>, Type):Type)(func_ret, (Unknown{}: Type)))))), FuncArg[(FuncArg{.func=(func: bit<32>), .name=(_: internment::Intern<string>), .ty=(ty: Type)}: FuncArg)], var __group = ty.group_by((func, ret, scope, name)), ((var args: ddlog_std::Vec<Type>) = ((ddlog_std::group_to_vec: function(ddlog_std::Group<(bit<32>, ddlog_std::Ref<Type>, bit<32>, internment::Intern<string>),Type>):ddlog_std::Vec<Type>)(__group))), ((var ty: Type) = (Func{.args=args, .ret=ret}: Type)). */
                            Rule::CollectionRule {
-                               description: "Variable[(Variable{.scope=scope, .name=name, .ty=ty}: Variable)] :- Function[(Function{.name=(name: internment::Intern<string>), .id=(func: bit<32>), .scope=(scope: bit<32>), .ret=(func_ret: ddlog_std::Option<Type>)}: Function)], ((var ret: ddlog_std::Ref<Type>) = ((ddlog_std::ref_new: function(Type):ddlog_std::Ref<Type>)(((ddlog_std::unwrap_or: function(ddlog_std::Option<Type>, Type):Type)(func_ret, (Unknown{}: Type)))))), FuncArg[(FuncArg{.func=(func: bit<32>), .name=(_: internment::Intern<string>), .ty=(ty: Type)}: FuncArg)], var args = Aggregate((func, ret, scope, name), ddlog_std::group_to_vec(ty)), ((var ty: Type) = (Func{.args=args, .ret=ret}: Type)).".to_string(),
+                               description: "Variable[(Variable{.scope=scope, .name=name, .ty=ty}: Variable)] :- Function[(Function{.name=(name: internment::Intern<string>), .id=(func: bit<32>), .scope=(scope: bit<32>), .ret=(func_ret: ddlog_std::Option<Type>)}: Function)], ((var ret: ddlog_std::Ref<Type>) = ((ddlog_std::ref_new: function(Type):ddlog_std::Ref<Type>)(((ddlog_std::unwrap_or: function(ddlog_std::Option<Type>, Type):Type)(func_ret, (Unknown{}: Type)))))), FuncArg[(FuncArg{.func=(func: bit<32>), .name=(_: internment::Intern<string>), .ty=(ty: Type)}: FuncArg)], var __group = ty.group_by((func, ret, scope, name)), ((var args: ddlog_std::Vec<Type>) = ((ddlog_std::group_to_vec: function(ddlog_std::Group<(bit<32>, ddlog_std::Ref<Type>, bit<32>, internment::Intern<string>),Type>):ddlog_std::Vec<Type>)(__group))), ((var ty: Type) = (Func{.args=args, .ret=ret}: Type)).".to_string(),
                                rel: Relations::Function as RelId,
                                xform: Some(XFormCollection::Arrange {
                                                description: "arrange Function[(Function{.name=(name: internment::Intern<string>), .id=(func: bit<32>), .scope=(scope: bit<32>), .ret=(func_ret: ddlog_std::Option<Type>)}: Function)] by (func)" .to_string(),
@@ -913,29 +991,33 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                                                                                           }
                                                                                           __f},
                                                                                           next: Box::new(XFormArrangement::Aggregate{
-                                                                                                             description: "Function[(Function{.name=(name: internment::Intern<string>), .id=(func: bit<32>), .scope=(scope: bit<32>), .ret=(func_ret: ddlog_std::Option<Type>)}: Function)], ((var ret: ddlog_std::Ref<Type>) = ((ddlog_std::ref_new: function(Type):ddlog_std::Ref<Type>)(((ddlog_std::unwrap_or: function(ddlog_std::Option<Type>, Type):Type)(func_ret, (Unknown{}: Type)))))), FuncArg[(FuncArg{.func=(func: bit<32>), .name=(_: internment::Intern<string>), .ty=(ty: Type)}: FuncArg)], var args = Aggregate((func, ret, scope, name), ddlog_std::group_to_vec(ty))".to_string(),
+                                                                                                             description: "Function[(Function{.name=(name: internment::Intern<string>), .id=(func: bit<32>), .scope=(scope: bit<32>), .ret=(func_ret: ddlog_std::Option<Type>)}: Function)], ((var ret: ddlog_std::Ref<Type>) = ((ddlog_std::ref_new: function(Type):ddlog_std::Ref<Type>)(((ddlog_std::unwrap_or: function(ddlog_std::Option<Type>, Type):Type)(func_ret, (Unknown{}: Type)))))), FuncArg[(FuncArg{.func=(func: bit<32>), .name=(_: internment::Intern<string>), .ty=(ty: Type)}: FuncArg)], var __group = ty.group_by((func, ret, scope, name))".to_string(),
                                                                                                              ffun: None,
-                                                                                                             aggfun: &{fn __f(__key: &DDValue, __group__: &[(&DDValue, Weight)]) -> DDValue
+                                                                                                             aggfun: &{fn __f(__key: &DDValue, __group__: &[(&DDValue, Weight)]) -> Option<DDValue>
                                                                                                          {
                                                                                                              let (ref func, ref ret, ref scope, ref name) = unsafe { Value::__Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval::from_ddvalue_ref( __key ) }.0;
-                                                                                                             let args = ::types::ddlog_std::group_to_vec::<(u32, ::types::ddlog_std::Ref<::types::Type>, u32, ::types::internment::Intern<String>), ::types::Type>(&::types::ddlog_std::Group::new(&((*func).clone(), (*ret).clone(), (*scope).clone(), (*name).clone()), __group__, {fn __f(__v: &DDValue) ->  ::types::Type
-                                                                                                                                                                                                                                                                                                                                                                                     {
-                                                                                                                                                                                                                                                                                                                                                                                         let (ref name, ref func, ref scope, ref func_ret, ref ret, ref ty) = unsafe { Value::__Tuple6__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type_Type::from_ddvalue_ref( __v ) }.0;
-                                                                                                                                                                                                                                                                                                                                                                                         (*ty).clone()
-                                                                                                                                                                                                                                                                                                                                                                                     }
-                                                                                                                                                                                                                                                                                                                                                                                     ::std::rc::Rc::new(__f)}));
-                                                                                                             Value::__Tuple4__ddlog_std_Vec__Type_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval((args.clone(), (*ret).clone(), (*scope).clone(), (*name).clone())).into_ddvalue()
+                                                                                                             let ref __group = unsafe{::types::ddlog_std::Group::new_by_ref(((*func).clone(), (*ret).clone(), (*scope).clone(), (*name).clone()), __group__, {fn __f(__v: &DDValue) ->  ::types::Type
+                                                                                                                                                                                                                                                             {
+                                                                                                                                                                                                                                                                 let (ref name, ref func, ref scope, ref func_ret, ref ret, ref ty) = unsafe { Value::__Tuple6__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type_Type::from_ddvalue_ref( __v ) }.0;
+                                                                                                                                                                                                                                                                 (*ty).clone()
+                                                                                                                                                                                                                                                             }
+                                                                                                                                                                                                                                                             ::std::rc::Rc::new(__f)})};
+                                                                                                             let ref args: ::types::ddlog_std::Vec<::types::Type> = match ::types::ddlog_std::group_to_vec(__group) {
+                                                                                                                 args => args,
+                                                                                                                 _ => return None
+                                                                                                             };
+                                                                                                             let ref ty: ::types::Type = match (::types::Type::Func{args: (*args).clone(), ret: (*ret).clone()}) {
+                                                                                                                 ty => ty,
+                                                                                                                 _ => return None
+                                                                                                             };
+                                                                                                             Some(Value::__Tuple3____Bitval32_internment_Intern____Stringval_Type(((*scope).clone(), (*name).clone(), (*ty).clone())).into_ddvalue())
                                                                                                          }
                                                                                                          __f},
                                                                                                              next: Box::new(Some(XFormCollection::FilterMap{
-                                                                                                                                     description: "head of Variable[(Variable{.scope=scope, .name=name, .ty=ty}: Variable)] :- Function[(Function{.name=(name: internment::Intern<string>), .id=(func: bit<32>), .scope=(scope: bit<32>), .ret=(func_ret: ddlog_std::Option<Type>)}: Function)], ((var ret: ddlog_std::Ref<Type>) = ((ddlog_std::ref_new: function(Type):ddlog_std::Ref<Type>)(((ddlog_std::unwrap_or: function(ddlog_std::Option<Type>, Type):Type)(func_ret, (Unknown{}: Type)))))), FuncArg[(FuncArg{.func=(func: bit<32>), .name=(_: internment::Intern<string>), .ty=(ty: Type)}: FuncArg)], var args = Aggregate((func, ret, scope, name), ddlog_std::group_to_vec(ty)), ((var ty: Type) = (Func{.args=args, .ret=ret}: Type))." .to_string(),
+                                                                                                                                     description: "head of Variable[(Variable{.scope=scope, .name=name, .ty=ty}: Variable)] :- Function[(Function{.name=(name: internment::Intern<string>), .id=(func: bit<32>), .scope=(scope: bit<32>), .ret=(func_ret: ddlog_std::Option<Type>)}: Function)], ((var ret: ddlog_std::Ref<Type>) = ((ddlog_std::ref_new: function(Type):ddlog_std::Ref<Type>)(((ddlog_std::unwrap_or: function(ddlog_std::Option<Type>, Type):Type)(func_ret, (Unknown{}: Type)))))), FuncArg[(FuncArg{.func=(func: bit<32>), .name=(_: internment::Intern<string>), .ty=(ty: Type)}: FuncArg)], var __group = ty.group_by((func, ret, scope, name)), ((var args: ddlog_std::Vec<Type>) = ((ddlog_std::group_to_vec: function(ddlog_std::Group<(bit<32>, ddlog_std::Ref<Type>, bit<32>, internment::Intern<string>),Type>):ddlog_std::Vec<Type>)(__group))), ((var ty: Type) = (Func{.args=args, .ret=ret}: Type))." .to_string(),
                                                                                                                                      fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
                                                                                                                                      {
-                                                                                                                                         let (ref args, ref ret, ref scope, ref name) = unsafe { Value::__Tuple4__ddlog_std_Vec__Type_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval::from_ddvalue_ref( &__v ) }.0;
-                                                                                                                                         let ref ty: ::types::Type = match (::types::Type::Func{args: (*args).clone(), ret: (*ret).clone()}) {
-                                                                                                                                             ty => ty,
-                                                                                                                                             _ => return None
-                                                                                                                                         };
+                                                                                                                                         let (ref scope, ref name, ref ty) = unsafe { Value::__Tuple3____Bitval32_internment_Intern____Stringval_Type::from_ddvalue_ref( &__v ) }.0;
                                                                                                                                          Some(Value::Variable((::types::Variable{scope: (*scope).clone(), name: (*name).clone(), ty: (*ty).clone()})).into_ddvalue())
                                                                                                                                      }
                                                                                                                                      __f},
@@ -973,7 +1055,7 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                            /* Variable[(Variable{.scope=scope, .name=name, .ty=ty}: Variable)] :- Variable[(Variable{.scope=(var_scope: bit<32>), .name=(name: internment::Intern<string>), .ty=(ty: Type)}: Variable)], ChildScope[(ChildScope{.parent=(var_scope: bit<32>), .child=(scope: bit<32>)}: ChildScope)]. */
                            Rule::ArrangementRule {
                                description: "Variable[(Variable{.scope=scope, .name=name, .ty=ty}: Variable)] :- Variable[(Variable{.scope=(var_scope: bit<32>), .name=(name: internment::Intern<string>), .ty=(ty: Type)}: Variable)], ChildScope[(ChildScope{.parent=(var_scope: bit<32>), .child=(scope: bit<32>)}: ChildScope)].".to_string(),
-                               arr: ( Relations::Variable as RelId, 1),
+                               arr: ( Relations::Variable as RelId, 3),
                                xform: XFormArrangement::Join{
                                           description: "Variable[(Variable{.scope=(var_scope: bit<32>), .name=(name: internment::Intern<string>), .ty=(ty: Type)}: Variable)], ChildScope[(ChildScope{.parent=(var_scope: bit<32>), .child=(scope: bit<32>)}: ChildScope)]".to_string(),
                                           ffun: None,
@@ -996,6 +1078,19 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                            }],
                        arrangements: vec![
                            Arrangement::Map{
+                              name: r###"(Variable{.scope=(_0: bit<32>), .name=(_1: internment::Intern<string>), .ty=(_: Type)}: Variable) /*join*/"###.to_string(),
+                               afun: &{fn __f(__v: DDValue) -> Option<(DDValue,DDValue)>
+                               {
+                                   let __cloned = __v.clone();
+                                   match unsafe { Value::Variable::from_ddvalue(__v) }.0 {
+                                       ::types::Variable{scope: ref _0, name: ref _1, ty: _} => Some(Value::__Tuple2____Bitval32_internment_Intern____Stringval(((*_0).clone(), (*_1).clone())).into_ddvalue()),
+                                       _ => None
+                                   }.map(|x|(x,__cloned))
+                               }
+                               __f},
+                               queryable: false
+                           },
+                           Arrangement::Map{
                               name: r###"(Variable{.scope=(_0: bit<32>), .name=(_1: internment::Intern<string>), .ty=(Func{.args=(_: ddlog_std::Vec<Type>), .ret=(_: ddlog_std::Ref<Type>)}: Type)}: Variable) /*join*/"###.to_string(),
                                afun: &{fn __f(__v: DDValue) -> Option<(DDValue,DDValue)>
                                {
@@ -1007,6 +1102,18 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                                }
                                __f},
                                queryable: false
+                           },
+                           Arrangement::Set{
+                               name: r###"(Variable{.scope=(_0: bit<32>), .name=(_1: internment::Intern<string>), .ty=(_: Type)}: Variable) /*antijoin*/"###.to_string(),
+                               fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                               {
+                                   match unsafe { Value::Variable::from_ddvalue(__v) }.0 {
+                                       ::types::Variable{scope: ref _0, name: ref _1, ty: _} => Some(Value::__Tuple2____Bitval32_internment_Intern____Stringval(((*_0).clone(), (*_1).clone())).into_ddvalue()),
+                                       _ => None
+                                   }
+                               }
+                               __f},
+                               distinct: true
                            },
                            Arrangement::Map{
                               name: r###"(Variable{.scope=(_0: bit<32>), .name=(_: internment::Intern<string>), .ty=(_: Type)}: Variable) /*join*/"###.to_string(),
@@ -1023,112 +1130,177 @@ pub fn prog(__update_cb: Box<dyn CBFn>) -> Program {
                            }],
                        change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
                    };
+    let UninferedExpr = Relation {
+                            name:         "UninferedExpr".to_string(),
+                            input:        false,
+                            distinct:     true,
+                            caching_mode: CachingMode::Set,
+                            key_func:     None,
+                            id:           Relations::UninferedExpr as RelId,
+                            rules:        vec![
+                                /* UninferedExpr[(UninferedExpr{.expr=expr}: UninferedExpr)] :- Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(_: ExprKind), .scope=(_: bit<32>)}: Expression)], not ExpressionType[(ExpressionType{.expr=(expr: bit<32>), .ty=(_: Type)}: ExpressionType)]. */
+                                Rule::ArrangementRule {
+                                    description: "UninferedExpr[(UninferedExpr{.expr=expr}: UninferedExpr)] :- Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(_: ExprKind), .scope=(_: bit<32>)}: Expression)], not ExpressionType[(ExpressionType{.expr=(expr: bit<32>), .ty=(_: Type)}: ExpressionType)].".to_string(),
+                                    arr: ( Relations::Expression as RelId, 2),
+                                    xform: XFormArrangement::Antijoin {
+                                               description: "Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(_: ExprKind), .scope=(_: bit<32>)}: Expression)], not ExpressionType[(ExpressionType{.expr=(expr: bit<32>), .ty=(_: Type)}: ExpressionType)]".to_string(),
+                                               ffun: None,
+                                               arrangement: (Relations::ExpressionType as RelId,1),
+                                               next: Box::new(Some(XFormCollection::FilterMap{
+                                                                       description: "head of UninferedExpr[(UninferedExpr{.expr=expr}: UninferedExpr)] :- Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(_: ExprKind), .scope=(_: bit<32>)}: Expression)], not ExpressionType[(ExpressionType{.expr=(expr: bit<32>), .ty=(_: Type)}: ExpressionType)]." .to_string(),
+                                                                       fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                                       {
+                                                                           let ref expr = match unsafe {  Value::Expression::from_ddvalue_ref(&__v) }.0 {
+                                                                               ::types::Expression{id: ref expr, func: _, kind: _, scope: _} => (*expr).clone(),
+                                                                               _ => return None
+                                                                           };
+                                                                           Some(Value::UninferedExpr((::types::UninferedExpr{expr: (*expr).clone()})).into_ddvalue())
+                                                                       }
+                                                                       __f},
+                                                                       next: Box::new(None)
+                                                                   }))
+                                           }
+                                },
+                                /* UninferedExpr[(UninferedExpr{.expr=expr}: UninferedExpr)] :- Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(_: ExprKind), .scope=(_: bit<32>)}: Expression)], ExpressionType[(ExpressionType{.expr=(expr: bit<32>), .ty=(Poison{}: Type)}: ExpressionType)]. */
+                                Rule::ArrangementRule {
+                                    description: "UninferedExpr[(UninferedExpr{.expr=expr}: UninferedExpr)] :- Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(_: ExprKind), .scope=(_: bit<32>)}: Expression)], ExpressionType[(ExpressionType{.expr=(expr: bit<32>), .ty=(Poison{}: Type)}: ExpressionType)].".to_string(),
+                                    arr: ( Relations::Expression as RelId, 2),
+                                    xform: XFormArrangement::Semijoin{
+                                               description: "Expression[(Expression{.id=(expr: bit<32>), .func=(_: bit<32>), .kind=(_: ExprKind), .scope=(_: bit<32>)}: Expression)], ExpressionType[(ExpressionType{.expr=(expr: bit<32>), .ty=(Poison{}: Type)}: ExpressionType)]".to_string(),
+                                               ffun: None,
+                                               arrangement: (Relations::ExpressionType as RelId,2),
+                                               jfun: &{fn __f(_: &DDValue ,__v1: &DDValue,___v2: &()) -> Option<DDValue>
+                                               {
+                                                   let ref expr = match unsafe {  Value::Expression::from_ddvalue_ref(__v1) }.0 {
+                                                       ::types::Expression{id: ref expr, func: _, kind: _, scope: _} => (*expr).clone(),
+                                                       _ => return None
+                                                   };
+                                                   Some(Value::UninferedExpr((::types::UninferedExpr{expr: (*expr).clone()})).into_ddvalue())
+                                               }
+                                               __f},
+                                               next: Box::new(None)
+                                           }
+                                }],
+                            arrangements: vec![
+                                ],
+                            change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                        };
+    let OutOfScopeVar = Relation {
+                            name:         "OutOfScopeVar".to_string(),
+                            input:        false,
+                            distinct:     true,
+                            caching_mode: CachingMode::Set,
+                            key_func:     None,
+                            id:           Relations::OutOfScopeVar as RelId,
+                            rules:        vec![
+                                /* OutOfScopeVar[(OutOfScopeVar{.variable=variable, .used=used}: OutOfScopeVar)] :- Expression[(Expression{.id=(used: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(variable: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], not Variable[(Variable{.scope=(scope: bit<32>), .name=(variable: internment::Intern<string>), .ty=(_: Type)}: Variable)]. */
+                                Rule::ArrangementRule {
+                                    description: "OutOfScopeVar[(OutOfScopeVar{.variable=variable, .used=used}: OutOfScopeVar)] :- Expression[(Expression{.id=(used: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(variable: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], not Variable[(Variable{.scope=(scope: bit<32>), .name=(variable: internment::Intern<string>), .ty=(_: Type)}: Variable)].".to_string(),
+                                    arr: ( Relations::Expression as RelId, 0),
+                                    xform: XFormArrangement::Antijoin {
+                                               description: "Expression[(Expression{.id=(used: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(variable: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], not Variable[(Variable{.scope=(scope: bit<32>), .name=(variable: internment::Intern<string>), .ty=(_: Type)}: Variable)]".to_string(),
+                                               ffun: None,
+                                               arrangement: (Relations::Variable as RelId,2),
+                                               next: Box::new(Some(XFormCollection::FilterMap{
+                                                                       description: "head of OutOfScopeVar[(OutOfScopeVar{.variable=variable, .used=used}: OutOfScopeVar)] :- Expression[(Expression{.id=(used: bit<32>), .func=(_: bit<32>), .kind=(Var{.v=(variable: internment::Intern<string>)}: ExprKind), .scope=(scope: bit<32>)}: Expression)], not Variable[(Variable{.scope=(scope: bit<32>), .name=(variable: internment::Intern<string>), .ty=(_: Type)}: Variable)]." .to_string(),
+                                                                       fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                                       {
+                                                                           let (ref used, ref variable, ref scope) = match unsafe {  Value::Expression::from_ddvalue_ref(&__v) }.0 {
+                                                                               ::types::Expression{id: ref used, func: _, kind: ::types::ExprKind::Var{v: ref variable}, scope: ref scope} => ((*used).clone(), (*variable).clone(), (*scope).clone()),
+                                                                               _ => return None
+                                                                           };
+                                                                           Some(Value::OutOfScopeVar((::types::OutOfScopeVar{variable: (*variable).clone(), used: (*used).clone()})).into_ddvalue())
+                                                                       }
+                                                                       __f},
+                                                                       next: Box::new(None)
+                                                                   }))
+                                           }
+                                }],
+                            arrangements: vec![
+                                ],
+                            change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                        };
     let INPUT_VarDecl = Relation {
-        name: "INPUT_VarDecl".to_string(),
-        input: false,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::INPUT_VarDecl as RelId,
-        rules: vec![
-            /* INPUT_VarDecl[x] :- VarDecl[(x: VarDecl)]. */
-            Rule::CollectionRule {
-                description: "INPUT_VarDecl[x] :- VarDecl[(x: VarDecl)].".to_string(),
-                rel: Relations::VarDecl as RelId,
-                xform: Some(XFormCollection::FilterMap {
-                    description: "head of INPUT_VarDecl[x] :- VarDecl[(x: VarDecl)].".to_string(),
-                    fmfun: &{
-                        fn __f(__v: DDValue) -> Option<DDValue> {
-                            let ref x = match unsafe { Value::VarDecl::from_ddvalue_ref(&__v) }.0 {
-                                ref x => (*x).clone(),
-                                _ => return None,
-                            };
-                            Some(Value::VarDecl((*x).clone()).into_ddvalue())
-                        }
-                        __f
-                    },
-                    next: Box::new(None),
-                }),
-            },
-        ],
-        arrangements: vec![],
-        change_cb: Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone()))),
-    };
+                            name:         "INPUT_VarDecl".to_string(),
+                            input:        false,
+                            distinct:     false,
+                            caching_mode: CachingMode::Set,
+                            key_func:     None,
+                            id:           Relations::INPUT_VarDecl as RelId,
+                            rules:        vec![
+                                /* INPUT_VarDecl[x] :- VarDecl[(x: VarDecl)]. */
+                                Rule::CollectionRule {
+                                    description: "INPUT_VarDecl[x] :- VarDecl[(x: VarDecl)].".to_string(),
+                                    rel: Relations::VarDecl as RelId,
+                                    xform: Some(XFormCollection::FilterMap{
+                                                    description: "head of INPUT_VarDecl[x] :- VarDecl[(x: VarDecl)]." .to_string(),
+                                                    fmfun: &{fn __f(__v: DDValue) -> Option<DDValue>
+                                                    {
+                                                        let ref x = match unsafe {  Value::VarDecl::from_ddvalue_ref(&__v) }.0 {
+                                                            ref x => (*x).clone(),
+                                                            _ => return None
+                                                        };
+                                                        Some(Value::VarDecl((*x).clone()).into_ddvalue())
+                                                    }
+                                                    __f},
+                                                    next: Box::new(None)
+                                                })
+                                }],
+                            arrangements: vec![
+                                ],
+                            change_cb:    Some(sync::Arc::new(sync::Mutex::new(__update_cb.clone())))
+                        };
     let __Null = Relation {
-        name: "__Null".to_string(),
-        input: false,
-        distinct: false,
-        caching_mode: CachingMode::Set,
-        key_func: None,
-        id: Relations::__Null as RelId,
-        rules: vec![],
-        arrangements: vec![Arrangement::Map {
-            name: r###"_ /*join*/"###.to_string(),
-            afun: &{
-                fn __f(__v: DDValue) -> Option<(DDValue, DDValue)> {
-                    let __cloned = __v.clone();
-                    match unsafe { Value::__Tuple0__::from_ddvalue(__v) }.0 {
-                        _ => Some(Value::__Tuple0__(()).into_ddvalue()),
-                        _ => None,
-                    }
-                    .map(|x| (x, __cloned))
-                }
-                __f
-            },
-            queryable: true,
-        }],
-        change_cb: None,
-    };
+                     name:         "__Null".to_string(),
+                     input:        false,
+                     distinct:     false,
+                     caching_mode: CachingMode::Set,
+                     key_func:     None,
+                     id:           Relations::__Null as RelId,
+                     rules:        vec![
+                         ],
+                     arrangements: vec![
+                         Arrangement::Map{
+                            name: r###"_ /*join*/"###.to_string(),
+                             afun: &{fn __f(__v: DDValue) -> Option<(DDValue,DDValue)>
+                             {
+                                 let __cloned = __v.clone();
+                                 match unsafe { Value::__Tuple0__::from_ddvalue(__v) }.0 {
+                                     _ => Some(Value::__Tuple0__(()).into_ddvalue()),
+                                     _ => None
+                                 }.map(|x|(x,__cloned))
+                             }
+                             __f},
+                             queryable: true
+                         }],
+                     change_cb:    None
+                 };
     Program {
         nodes: vec![
-            ProgNode::Rel { rel: Application },
-            ProgNode::Rel {
-                rel: INPUT_Application,
-            },
-            ProgNode::Rel {
-                rel: ApplicationArg,
-            },
-            ProgNode::Rel {
-                rel: INPUT_ApplicationArg,
-            },
-            ProgNode::Rel { rel: Expression },
-            ProgNode::Rel {
-                rel: INPUT_Expression,
-            },
-            ProgNode::Rel { rel: FuncArg },
-            ProgNode::Rel { rel: INPUT_FuncArg },
-            ProgNode::Rel { rel: Function },
-            ProgNode::Rel {
-                rel: INPUT_Function,
-            },
-            ProgNode::Rel { rel: InputScope },
-            ProgNode::SCC {
-                rels: vec![RecursiveRelation {
-                    rel: ChildScope,
-                    distinct: true,
-                }],
-            },
-            ProgNode::Rel {
-                rel: INPUT_InputScope,
-            },
-            ProgNode::Rel { rel: Literal },
-            ProgNode::Rel { rel: INPUT_Literal },
-            ProgNode::Rel { rel: VarDecl },
-            ProgNode::SCC {
-                rels: vec![
-                    RecursiveRelation {
-                        rel: ExpressionType,
-                        distinct: true,
-                    },
-                    RecursiveRelation {
-                        rel: Variable,
-                        distinct: true,
-                    },
-                ],
-            },
-            ProgNode::Rel { rel: INPUT_VarDecl },
-            ProgNode::Rel { rel: __Null },
+            ProgNode::Rel{rel: Application},
+            ProgNode::Rel{rel: INPUT_Application},
+            ProgNode::Rel{rel: ApplicationArg},
+            ProgNode::Rel{rel: INPUT_ApplicationArg},
+            ProgNode::Rel{rel: Expression},
+            ProgNode::Rel{rel: NonexistantFunction},
+            ProgNode::Rel{rel: INPUT_Expression},
+            ProgNode::Rel{rel: FuncArg},
+            ProgNode::Rel{rel: INPUT_FuncArg},
+            ProgNode::Rel{rel: Function},
+            ProgNode::Rel{rel: INPUT_Function},
+            ProgNode::Rel{rel: InputScope},
+            ProgNode::SCC{rels: vec![RecursiveRelation{rel: ChildScope, distinct: true}]},
+            ProgNode::Rel{rel: INPUT_InputScope},
+            ProgNode::Rel{rel: Literal},
+            ProgNode::Rel{rel: INPUT_Literal},
+            ProgNode::Rel{rel: VarDecl},
+            ProgNode::SCC{rels: vec![RecursiveRelation{rel: ExpressionType, distinct: true}, RecursiveRelation{rel: Variable, distinct: true}]},
+            ProgNode::Rel{rel: UninferedExpr},
+            ProgNode::Rel{rel: OutOfScopeVar},
+            ProgNode::Rel{rel: INPUT_VarDecl},
+            ProgNode::Rel{rel: __Null}
         ],
-        init_data: vec![],
+        init_data: vec![
+        ]
     }
 }

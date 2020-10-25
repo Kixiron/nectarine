@@ -16,16 +16,16 @@
 )]
 
 // Required for #[derive(Serialize, Deserialize)].
+use ::serde::Deserialize;
+use ::serde::Serialize;
 use ::differential_datalog::record::FromRecord;
 use ::differential_datalog::record::IntoRecord;
 use ::differential_datalog::record::Mutator;
-use ::serde::Deserialize;
-use ::serde::Serialize;
 
-use crate::closure;
-use crate::std_usize;
-use crate::string_append;
 use crate::string_append_str;
+use crate::string_append;
+use crate::std_usize;
+use crate::closure;
 
 //
 // use crate::ddlog_std;
@@ -92,24 +92,18 @@ pub fn debug_event_join<
     );
 }
 
-pub fn debug_split_group<'a, K, I: 'static + Clone, V: 'static>(
-    g: &'a crate::ddlog_std::Group<'a, K, (I, V)>,
-) -> (crate::ddlog_std::Vec<I>, crate::ddlog_std::Group<'a, K, V>) {
+pub fn debug_split_group<K: Clone, I: 'static + Clone, V: Clone + 'static>(
+    g: &crate::ddlog_std::Group<K, (I, V)>,
+) -> (crate::ddlog_std::Vec<I>, crate::ddlog_std::Group<K, V>) {
     let mut inputs =
         crate::ddlog_std::Vec::with_capacity(crate::ddlog_std::group_count(g) as usize);
-    for (i, _) in g.iter() {
-        inputs.push(i.clone())
+    let mut vals = ::std::vec::Vec::with_capacity(crate::ddlog_std::group_count(g) as usize);
+    for (i, v) in g.iter() {
+        inputs.push(i);
+        vals.push(v);
     }
 
-    let orig_project = g.project.clone();
-    (
-        inputs,
-        crate::ddlog_std::Group::new(
-            g.key,
-            g.group,
-            ::std::rc::Rc::new(move |v| (orig_project)(v).1),
-        ),
-    )
+    (inputs, crate::ddlog_std::Group::new(g.key(), vals))
 }
 
 pub type DDlogOpId = (u32, u32, u32);

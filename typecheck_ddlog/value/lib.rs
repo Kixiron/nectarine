@@ -44,7 +44,7 @@ pub mod flatbuf;
 impl TryFrom<&RelIdentifier> for Relations {
     type Error = ();
 
-    fn try_from(rel_id: &RelIdentifier) -> result::Result<Self, Self::Error> {
+    fn try_from(rel_id: &RelIdentifier) -> result::Result<Self, ()> {
         match rel_id {
             RelIdentifier::RelName(rname) => Relations::try_from(rname.as_ref()),
             RelIdentifier::RelId(id) => Relations::try_from(*id),
@@ -52,12 +52,12 @@ impl TryFrom<&RelIdentifier> for Relations {
     }
 }
 
-pub mod Value {
+
+pub mod Value
+{
     use super::*;
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Bitval32(pub u32);
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Bitval32 (pub u32);
     impl abomonation::Abomonation for __Bitval32 {}
     impl ::std::fmt::Display for __Bitval32 {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -70,16 +70,14 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<__Bitval32> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut __Bitval32) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut __Bitval32 ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Bitval32}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Tuple0__(pub ());
+    ::differential_datalog::decl_ddval_convert!{__Bitval32}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Tuple0__ (pub ());
     impl abomonation::Abomonation for __Tuple0__ {}
     impl ::std::fmt::Display for __Tuple0__ {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -92,224 +90,134 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<__Tuple0__> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut __Tuple0__) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut __Tuple0__ ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Tuple0__}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval(
-        pub  (
-            u32,
-            ::types::ddlog_std::Ref<::types::Type>,
-            u32,
-            ::types::internment::Intern<String>,
-        ),
-    );
-    impl abomonation::Abomonation
-        for __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval
-    {
-    }
-    impl ::std::fmt::Display
-        for __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval
-    {
+    ::differential_datalog::decl_ddval_convert!{__Tuple0__}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval (pub (u32, ::types::ddlog_std::Ref<::types::Type>, u32, ::types::internment::Intern<String>));
+    impl abomonation::Abomonation for __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval {}
+    impl ::std::fmt::Display for __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
             self.clone().into_record().fmt(f)
         }
     }
-    impl differential_datalog::record::IntoRecord
-        for __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval
-    {
+    impl differential_datalog::record::IntoRecord for __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval {
         fn into_record(self) -> differential_datalog::record::Record {
             self.0.into_record()
         }
     }
-    impl
-        differential_datalog::record::Mutator<
-            __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval,
-        > for differential_datalog::record::Record
-    {
-        fn mutate(
-            &self,
-            v: &mut __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval,
-        ) -> ::std::result::Result<(), ::std::string::String> {
+    impl differential_datalog::record::Mutator<__Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut __Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Tuple2____Bitval32_internment_Intern____Stringval(
-        pub (u32, ::types::internment::Intern<String>),
-    );
+    ::differential_datalog::decl_ddval_convert!{__Tuple4____Bitval32_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Tuple2____Bitval32_internment_Intern____Stringval (pub (u32, ::types::internment::Intern<String>));
     impl abomonation::Abomonation for __Tuple2____Bitval32_internment_Intern____Stringval {}
     impl ::std::fmt::Display for __Tuple2____Bitval32_internment_Intern____Stringval {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
             self.clone().into_record().fmt(f)
         }
     }
-    impl differential_datalog::record::IntoRecord
-        for __Tuple2____Bitval32_internment_Intern____Stringval
-    {
+    impl differential_datalog::record::IntoRecord for __Tuple2____Bitval32_internment_Intern____Stringval {
         fn into_record(self) -> differential_datalog::record::Record {
             self.0.into_record()
         }
     }
-    impl differential_datalog::record::Mutator<__Tuple2____Bitval32_internment_Intern____Stringval>
-        for differential_datalog::record::Record
-    {
-        fn mutate(
-            &self,
-            v: &mut __Tuple2____Bitval32_internment_Intern____Stringval,
-        ) -> ::std::result::Result<(), ::std::string::String> {
+    impl differential_datalog::record::Mutator<__Tuple2____Bitval32_internment_Intern____Stringval> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut __Tuple2____Bitval32_internment_Intern____Stringval ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Tuple2____Bitval32_internment_Intern____Stringval}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Tuple3____Bitval32_internment_Intern____Stringval___Bitval32(
-        pub (u32, ::types::internment::Intern<String>, u32),
-    );
+    ::differential_datalog::decl_ddval_convert!{__Tuple2____Bitval32_internment_Intern____Stringval}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Tuple3____Bitval32_internment_Intern____Stringval___Bitval32 (pub (u32, ::types::internment::Intern<String>, u32));
     impl abomonation::Abomonation for __Tuple3____Bitval32_internment_Intern____Stringval___Bitval32 {}
     impl ::std::fmt::Display for __Tuple3____Bitval32_internment_Intern____Stringval___Bitval32 {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
             self.clone().into_record().fmt(f)
         }
     }
-    impl differential_datalog::record::IntoRecord
-        for __Tuple3____Bitval32_internment_Intern____Stringval___Bitval32
-    {
+    impl differential_datalog::record::IntoRecord for __Tuple3____Bitval32_internment_Intern____Stringval___Bitval32 {
         fn into_record(self) -> differential_datalog::record::Record {
             self.0.into_record()
         }
     }
-    impl
-        differential_datalog::record::Mutator<
-            __Tuple3____Bitval32_internment_Intern____Stringval___Bitval32,
-        > for differential_datalog::record::Record
-    {
-        fn mutate(
-            &self,
-            v: &mut __Tuple3____Bitval32_internment_Intern____Stringval___Bitval32,
-        ) -> ::std::result::Result<(), ::std::string::String> {
+    impl differential_datalog::record::Mutator<__Tuple3____Bitval32_internment_Intern____Stringval___Bitval32> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut __Tuple3____Bitval32_internment_Intern____Stringval___Bitval32 ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Tuple3____Bitval32_internment_Intern____Stringval___Bitval32}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Tuple4__ddlog_std_Vec__Type_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval(
-        pub  (
-            ::types::ddlog_std::Vec<::types::Type>,
-            ::types::ddlog_std::Ref<::types::Type>,
-            u32,
-            ::types::internment::Intern<String>,
-        ),
-    );
-    impl abomonation::Abomonation for __Tuple4__ddlog_std_Vec__Type_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval {}
-    impl ::std::fmt::Display for __Tuple4__ddlog_std_Vec__Type_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval {
+    ::differential_datalog::decl_ddval_convert!{__Tuple3____Bitval32_internment_Intern____Stringval___Bitval32}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Tuple3____Bitval32_internment_Intern____Stringval_Type (pub (u32, ::types::internment::Intern<String>, ::types::Type));
+    impl abomonation::Abomonation for __Tuple3____Bitval32_internment_Intern____Stringval_Type {}
+    impl ::std::fmt::Display for __Tuple3____Bitval32_internment_Intern____Stringval_Type {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
             self.clone().into_record().fmt(f)
         }
     }
-    impl differential_datalog::record::IntoRecord for __Tuple4__ddlog_std_Vec__Type_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval {
+    impl differential_datalog::record::IntoRecord for __Tuple3____Bitval32_internment_Intern____Stringval_Type {
         fn into_record(self) -> differential_datalog::record::Record {
             self.0.into_record()
         }
     }
-    impl differential_datalog::record::Mutator<__Tuple4__ddlog_std_Vec__Type_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut __Tuple4__ddlog_std_Vec__Type_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval ) -> ::std::result::Result<(), ::std::string::String> {
+    impl differential_datalog::record::Mutator<__Tuple3____Bitval32_internment_Intern____Stringval_Type> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut __Tuple3____Bitval32_internment_Intern____Stringval_Type ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Tuple4__ddlog_std_Vec__Type_ddlog_std_Ref__Type___Bitval32_internment_Intern____Stringval}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Tuple2__internment_Intern____Stringval___Bitval32(
-        pub (::types::internment::Intern<String>, u32),
-    );
+    ::differential_datalog::decl_ddval_convert!{__Tuple3____Bitval32_internment_Intern____Stringval_Type}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Tuple2__internment_Intern____Stringval___Bitval32 (pub (::types::internment::Intern<String>, u32));
     impl abomonation::Abomonation for __Tuple2__internment_Intern____Stringval___Bitval32 {}
     impl ::std::fmt::Display for __Tuple2__internment_Intern____Stringval___Bitval32 {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
             self.clone().into_record().fmt(f)
         }
     }
-    impl differential_datalog::record::IntoRecord
-        for __Tuple2__internment_Intern____Stringval___Bitval32
-    {
+    impl differential_datalog::record::IntoRecord for __Tuple2__internment_Intern____Stringval___Bitval32 {
         fn into_record(self) -> differential_datalog::record::Record {
             self.0.into_record()
         }
     }
-    impl differential_datalog::record::Mutator<__Tuple2__internment_Intern____Stringval___Bitval32>
-        for differential_datalog::record::Record
-    {
-        fn mutate(
-            &self,
-            v: &mut __Tuple2__internment_Intern____Stringval___Bitval32,
-        ) -> ::std::result::Result<(), ::std::string::String> {
+    impl differential_datalog::record::Mutator<__Tuple2__internment_Intern____Stringval___Bitval32> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut __Tuple2__internment_Intern____Stringval___Bitval32 ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Tuple2__internment_Intern____Stringval___Bitval32}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Tuple3__internment_Intern____Stringval___Bitval32___Bitval32(
-        pub (::types::internment::Intern<String>, u32, u32),
-    );
+    ::differential_datalog::decl_ddval_convert!{__Tuple2__internment_Intern____Stringval___Bitval32}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Tuple3__internment_Intern____Stringval___Bitval32___Bitval32 (pub (::types::internment::Intern<String>, u32, u32));
     impl abomonation::Abomonation for __Tuple3__internment_Intern____Stringval___Bitval32___Bitval32 {}
     impl ::std::fmt::Display for __Tuple3__internment_Intern____Stringval___Bitval32___Bitval32 {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
             self.clone().into_record().fmt(f)
         }
     }
-    impl differential_datalog::record::IntoRecord
-        for __Tuple3__internment_Intern____Stringval___Bitval32___Bitval32
-    {
+    impl differential_datalog::record::IntoRecord for __Tuple3__internment_Intern____Stringval___Bitval32___Bitval32 {
         fn into_record(self) -> differential_datalog::record::Record {
             self.0.into_record()
         }
     }
-    impl
-        differential_datalog::record::Mutator<
-            __Tuple3__internment_Intern____Stringval___Bitval32___Bitval32,
-        > for differential_datalog::record::Record
-    {
-        fn mutate(
-            &self,
-            v: &mut __Tuple3__internment_Intern____Stringval___Bitval32___Bitval32,
-        ) -> ::std::result::Result<(), ::std::string::String> {
+    impl differential_datalog::record::Mutator<__Tuple3__internment_Intern____Stringval___Bitval32___Bitval32> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut __Tuple3__internment_Intern____Stringval___Bitval32___Bitval32 ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Tuple3__internment_Intern____Stringval___Bitval32___Bitval32}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Tuple5__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type(
-        pub  (
-            ::types::internment::Intern<String>,
-            u32,
-            u32,
-            ::types::ddlog_std::Option<::types::Type>,
-            ::types::ddlog_std::Ref<::types::Type>,
-        ),
-    );
+    ::differential_datalog::decl_ddval_convert!{__Tuple3__internment_Intern____Stringval___Bitval32___Bitval32}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Tuple5__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type (pub (::types::internment::Intern<String>, u32, u32, ::types::ddlog_std::Option<::types::Type>, ::types::ddlog_std::Ref<::types::Type>));
     impl abomonation::Abomonation for __Tuple5__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type {}
     impl ::std::fmt::Display for __Tuple5__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -327,20 +235,9 @@ pub mod Value {
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Tuple5__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct __Tuple6__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type_Type(
-        pub  (
-            ::types::internment::Intern<String>,
-            u32,
-            u32,
-            ::types::ddlog_std::Option<::types::Type>,
-            ::types::ddlog_std::Ref<::types::Type>,
-            ::types::Type,
-        ),
-    );
+    ::differential_datalog::decl_ddval_convert!{__Tuple5__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct __Tuple6__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type_Type (pub (::types::internment::Intern<String>, u32, u32, ::types::ddlog_std::Option<::types::Type>, ::types::ddlog_std::Ref<::types::Type>, ::types::Type));
     impl abomonation::Abomonation for __Tuple6__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type_Type {}
     impl ::std::fmt::Display for __Tuple6__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type_Type {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -358,11 +255,9 @@ pub mod Value {
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {__Tuple6__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type_Type}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct Application(pub ::types::Application);
+    ::differential_datalog::decl_ddval_convert!{__Tuple6__internment_Intern____Stringval___Bitval32___Bitval32_ddlog_std_Option__Type_ddlog_std_Ref__Type_Type}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct Application (pub ::types::Application);
     impl abomonation::Abomonation for Application {}
     impl ::std::fmt::Display for Application {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -375,16 +270,14 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<Application> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut Application) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut Application ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {Application}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct ApplicationArg(pub ::types::ApplicationArg);
+    ::differential_datalog::decl_ddval_convert!{Application}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct ApplicationArg (pub ::types::ApplicationArg);
     impl abomonation::Abomonation for ApplicationArg {}
     impl ::std::fmt::Display for ApplicationArg {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -396,22 +289,15 @@ pub mod Value {
             self.0.into_record()
         }
     }
-    impl differential_datalog::record::Mutator<ApplicationArg>
-        for differential_datalog::record::Record
-    {
-        fn mutate(
-            &self,
-            v: &mut ApplicationArg,
-        ) -> ::std::result::Result<(), ::std::string::String> {
+    impl differential_datalog::record::Mutator<ApplicationArg> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut ApplicationArg ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {ApplicationArg}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct ChildScope(pub ::types::ChildScope);
+    ::differential_datalog::decl_ddval_convert!{ApplicationArg}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct ChildScope (pub ::types::ChildScope);
     impl abomonation::Abomonation for ChildScope {}
     impl ::std::fmt::Display for ChildScope {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -424,16 +310,14 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<ChildScope> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut ChildScope) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut ChildScope ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {ChildScope}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct Expression(pub ::types::Expression);
+    ::differential_datalog::decl_ddval_convert!{ChildScope}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct Expression (pub ::types::Expression);
     impl abomonation::Abomonation for Expression {}
     impl ::std::fmt::Display for Expression {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -446,16 +330,14 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<Expression> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut Expression) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut Expression ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {Expression}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct ExpressionType(pub ::types::ExpressionType);
+    ::differential_datalog::decl_ddval_convert!{Expression}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct ExpressionType (pub ::types::ExpressionType);
     impl abomonation::Abomonation for ExpressionType {}
     impl ::std::fmt::Display for ExpressionType {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -467,22 +349,15 @@ pub mod Value {
             self.0.into_record()
         }
     }
-    impl differential_datalog::record::Mutator<ExpressionType>
-        for differential_datalog::record::Record
-    {
-        fn mutate(
-            &self,
-            v: &mut ExpressionType,
-        ) -> ::std::result::Result<(), ::std::string::String> {
+    impl differential_datalog::record::Mutator<ExpressionType> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut ExpressionType ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {ExpressionType}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct FuncArg(pub ::types::FuncArg);
+    ::differential_datalog::decl_ddval_convert!{ExpressionType}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct FuncArg (pub ::types::FuncArg);
     impl abomonation::Abomonation for FuncArg {}
     impl ::std::fmt::Display for FuncArg {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -495,16 +370,14 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<FuncArg> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut FuncArg) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut FuncArg ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {FuncArg}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct Function(pub ::types::Function);
+    ::differential_datalog::decl_ddval_convert!{FuncArg}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct Function (pub ::types::Function);
     impl abomonation::Abomonation for Function {}
     impl ::std::fmt::Display for Function {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -517,16 +390,14 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<Function> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut Function) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut Function ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {Function}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct InputScope(pub ::types::InputScope);
+    ::differential_datalog::decl_ddval_convert!{Function}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct InputScope (pub ::types::InputScope);
     impl abomonation::Abomonation for InputScope {}
     impl ::std::fmt::Display for InputScope {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -539,16 +410,14 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<InputScope> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut InputScope) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut InputScope ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {InputScope}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct Literal(pub ::types::Literal);
+    ::differential_datalog::decl_ddval_convert!{InputScope}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct Literal (pub ::types::Literal);
     impl abomonation::Abomonation for Literal {}
     impl ::std::fmt::Display for Literal {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -561,16 +430,74 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<Literal> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut Literal) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut Literal ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {Literal}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct VarDecl(pub ::types::VarDecl);
+    ::differential_datalog::decl_ddval_convert!{Literal}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct NonexistantFunction (pub ::types::NonexistantFunction);
+    impl abomonation::Abomonation for NonexistantFunction {}
+    impl ::std::fmt::Display for NonexistantFunction {
+        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+            self.clone().into_record().fmt(f)
+        }
+    }
+    impl differential_datalog::record::IntoRecord for NonexistantFunction {
+        fn into_record(self) -> differential_datalog::record::Record {
+            self.0.into_record()
+        }
+    }
+    impl differential_datalog::record::Mutator<NonexistantFunction> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut NonexistantFunction ) -> ::std::result::Result<(), ::std::string::String> {
+            self.mutate(&mut v.0)
+        }
+    }
+    //#[typetag::serde]
+    ::differential_datalog::decl_ddval_convert!{NonexistantFunction}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct OutOfScopeVar (pub ::types::OutOfScopeVar);
+    impl abomonation::Abomonation for OutOfScopeVar {}
+    impl ::std::fmt::Display for OutOfScopeVar {
+        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+            self.clone().into_record().fmt(f)
+        }
+    }
+    impl differential_datalog::record::IntoRecord for OutOfScopeVar {
+        fn into_record(self) -> differential_datalog::record::Record {
+            self.0.into_record()
+        }
+    }
+    impl differential_datalog::record::Mutator<OutOfScopeVar> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut OutOfScopeVar ) -> ::std::result::Result<(), ::std::string::String> {
+            self.mutate(&mut v.0)
+        }
+    }
+    //#[typetag::serde]
+    ::differential_datalog::decl_ddval_convert!{OutOfScopeVar}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct UninferedExpr (pub ::types::UninferedExpr);
+    impl abomonation::Abomonation for UninferedExpr {}
+    impl ::std::fmt::Display for UninferedExpr {
+        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+            self.clone().into_record().fmt(f)
+        }
+    }
+    impl differential_datalog::record::IntoRecord for UninferedExpr {
+        fn into_record(self) -> differential_datalog::record::Record {
+            self.0.into_record()
+        }
+    }
+    impl differential_datalog::record::Mutator<UninferedExpr> for differential_datalog::record::Record {
+        fn mutate(&self, v: &mut UninferedExpr ) -> ::std::result::Result<(), ::std::string::String> {
+            self.mutate(&mut v.0)
+        }
+    }
+    //#[typetag::serde]
+    ::differential_datalog::decl_ddval_convert!{UninferedExpr}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct VarDecl (pub ::types::VarDecl);
     impl abomonation::Abomonation for VarDecl {}
     impl ::std::fmt::Display for VarDecl {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -583,16 +510,14 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<VarDecl> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut VarDecl) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut VarDecl ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {VarDecl}
-    #[derive(
-        Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug,
-    )]
-    pub struct Variable(pub ::types::Variable);
+    ::differential_datalog::decl_ddval_convert!{VarDecl}
+    #[derive(Default, Eq, Ord, Clone, Hash, PartialEq, PartialOrd, Serialize, Deserialize, Debug)]
+    pub struct Variable (pub ::types::Variable);
     impl abomonation::Abomonation for Variable {}
     impl ::std::fmt::Display for Variable {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -605,104 +530,113 @@ pub mod Value {
         }
     }
     impl differential_datalog::record::Mutator<Variable> for differential_datalog::record::Record {
-        fn mutate(&self, v: &mut Variable) -> ::std::result::Result<(), ::std::string::String> {
+        fn mutate(&self, v: &mut Variable ) -> ::std::result::Result<(), ::std::string::String> {
             self.mutate(&mut v.0)
         }
     }
     //#[typetag::serde]
-    ::differential_datalog::decl_ddval_convert! {Variable}
+    ::differential_datalog::decl_ddval_convert!{Variable}
 }
 impl TryFrom<&str> for Relations {
     type Error = ();
-    fn try_from(rname: &str) -> ::std::result::Result<Self, Self::Error> {
-        match rname {
-            "Application" => Ok(Relations::Application),
-            "ApplicationArg" => Ok(Relations::ApplicationArg),
-            "ChildScope" => Ok(Relations::ChildScope),
-            "Expression" => Ok(Relations::Expression),
-            "ExpressionType" => Ok(Relations::ExpressionType),
-            "FuncArg" => Ok(Relations::FuncArg),
-            "Function" => Ok(Relations::Function),
-            "INPUT_Application" => Ok(Relations::INPUT_Application),
-            "INPUT_ApplicationArg" => Ok(Relations::INPUT_ApplicationArg),
-            "INPUT_Expression" => Ok(Relations::INPUT_Expression),
-            "INPUT_FuncArg" => Ok(Relations::INPUT_FuncArg),
-            "INPUT_Function" => Ok(Relations::INPUT_Function),
-            "INPUT_InputScope" => Ok(Relations::INPUT_InputScope),
-            "INPUT_Literal" => Ok(Relations::INPUT_Literal),
-            "INPUT_VarDecl" => Ok(Relations::INPUT_VarDecl),
-            "InputScope" => Ok(Relations::InputScope),
-            "Literal" => Ok(Relations::Literal),
-            "VarDecl" => Ok(Relations::VarDecl),
-            "Variable" => Ok(Relations::Variable),
-            "__Null" => Ok(Relations::__Null),
-            _ => Err(()),
-        }
+    fn try_from(rname: &str) -> ::std::result::Result<Self, ()> {
+         match rname {
+        "Application" => Ok(Relations::Application),
+        "ApplicationArg" => Ok(Relations::ApplicationArg),
+        "ChildScope" => Ok(Relations::ChildScope),
+        "Expression" => Ok(Relations::Expression),
+        "ExpressionType" => Ok(Relations::ExpressionType),
+        "FuncArg" => Ok(Relations::FuncArg),
+        "Function" => Ok(Relations::Function),
+        "INPUT_Application" => Ok(Relations::INPUT_Application),
+        "INPUT_ApplicationArg" => Ok(Relations::INPUT_ApplicationArg),
+        "INPUT_Expression" => Ok(Relations::INPUT_Expression),
+        "INPUT_FuncArg" => Ok(Relations::INPUT_FuncArg),
+        "INPUT_Function" => Ok(Relations::INPUT_Function),
+        "INPUT_InputScope" => Ok(Relations::INPUT_InputScope),
+        "INPUT_Literal" => Ok(Relations::INPUT_Literal),
+        "INPUT_VarDecl" => Ok(Relations::INPUT_VarDecl),
+        "InputScope" => Ok(Relations::InputScope),
+        "Literal" => Ok(Relations::Literal),
+        "NonexistantFunction" => Ok(Relations::NonexistantFunction),
+        "OutOfScopeVar" => Ok(Relations::OutOfScopeVar),
+        "UninferedExpr" => Ok(Relations::UninferedExpr),
+        "VarDecl" => Ok(Relations::VarDecl),
+        "Variable" => Ok(Relations::Variable),
+        "__Null" => Ok(Relations::__Null),
+             _  => Err(())
+         }
     }
 }
 impl Relations {
     pub fn is_output(&self) -> bool {
         match self {
-            Relations::ChildScope => true,
-            Relations::ExpressionType => true,
-            Relations::INPUT_Application => true,
-            Relations::INPUT_ApplicationArg => true,
-            Relations::INPUT_Expression => true,
-            Relations::INPUT_FuncArg => true,
-            Relations::INPUT_Function => true,
-            Relations::INPUT_InputScope => true,
-            Relations::INPUT_Literal => true,
-            Relations::INPUT_VarDecl => true,
-            Relations::Variable => true,
-            _ => false,
+        Relations::ChildScope => true,
+        Relations::ExpressionType => true,
+        Relations::INPUT_Application => true,
+        Relations::INPUT_ApplicationArg => true,
+        Relations::INPUT_Expression => true,
+        Relations::INPUT_FuncArg => true,
+        Relations::INPUT_Function => true,
+        Relations::INPUT_InputScope => true,
+        Relations::INPUT_Literal => true,
+        Relations::INPUT_VarDecl => true,
+        Relations::NonexistantFunction => true,
+        Relations::OutOfScopeVar => true,
+        Relations::UninferedExpr => true,
+        Relations::Variable => true,
+            _  => false
         }
     }
 }
 impl Relations {
     pub fn is_input(&self) -> bool {
         match self {
-            Relations::Application => true,
-            Relations::ApplicationArg => true,
-            Relations::Expression => true,
-            Relations::FuncArg => true,
-            Relations::Function => true,
-            Relations::InputScope => true,
-            Relations::Literal => true,
-            Relations::VarDecl => true,
-            _ => false,
+        Relations::Application => true,
+        Relations::ApplicationArg => true,
+        Relations::Expression => true,
+        Relations::FuncArg => true,
+        Relations::Function => true,
+        Relations::InputScope => true,
+        Relations::Literal => true,
+        Relations::VarDecl => true,
+            _  => false
         }
     }
 }
 impl TryFrom<RelId> for Relations {
     type Error = ();
-    fn try_from(rid: RelId) -> ::std::result::Result<Self, Self::Error> {
-        match rid {
-            0 => Ok(Relations::Application),
-            1 => Ok(Relations::ApplicationArg),
-            2 => Ok(Relations::ChildScope),
-            3 => Ok(Relations::Expression),
-            4 => Ok(Relations::ExpressionType),
-            5 => Ok(Relations::FuncArg),
-            6 => Ok(Relations::Function),
-            7 => Ok(Relations::INPUT_Application),
-            8 => Ok(Relations::INPUT_ApplicationArg),
-            9 => Ok(Relations::INPUT_Expression),
-            10 => Ok(Relations::INPUT_FuncArg),
-            11 => Ok(Relations::INPUT_Function),
-            12 => Ok(Relations::INPUT_InputScope),
-            13 => Ok(Relations::INPUT_Literal),
-            14 => Ok(Relations::INPUT_VarDecl),
-            15 => Ok(Relations::InputScope),
-            16 => Ok(Relations::Literal),
-            17 => Ok(Relations::VarDecl),
-            18 => Ok(Relations::Variable),
-            19 => Ok(Relations::__Null),
-            _ => Err(()),
-        }
+    fn try_from(rid: RelId) -> ::std::result::Result<Self, ()> {
+         match rid {
+        0 => Ok(Relations::Application),
+        1 => Ok(Relations::ApplicationArg),
+        2 => Ok(Relations::ChildScope),
+        3 => Ok(Relations::Expression),
+        4 => Ok(Relations::ExpressionType),
+        5 => Ok(Relations::FuncArg),
+        6 => Ok(Relations::Function),
+        7 => Ok(Relations::INPUT_Application),
+        8 => Ok(Relations::INPUT_ApplicationArg),
+        9 => Ok(Relations::INPUT_Expression),
+        10 => Ok(Relations::INPUT_FuncArg),
+        11 => Ok(Relations::INPUT_Function),
+        12 => Ok(Relations::INPUT_InputScope),
+        13 => Ok(Relations::INPUT_Literal),
+        14 => Ok(Relations::INPUT_VarDecl),
+        15 => Ok(Relations::InputScope),
+        16 => Ok(Relations::Literal),
+        17 => Ok(Relations::NonexistantFunction),
+        18 => Ok(Relations::OutOfScopeVar),
+        19 => Ok(Relations::UninferedExpr),
+        20 => Ok(Relations::VarDecl),
+        21 => Ok(Relations::Variable),
+        22 => Ok(Relations::__Null),
+             _  => Err(())
+         }
     }
 }
 pub fn relid2name(rid: RelId) -> Option<&'static str> {
-    match rid {
+   match rid {
         0 => Some(&"Application"),
         1 => Some(&"ApplicationArg"),
         2 => Some(&"ChildScope"),
@@ -720,20 +654,21 @@ pub fn relid2name(rid: RelId) -> Option<&'static str> {
         14 => Some(&"INPUT_VarDecl"),
         15 => Some(&"InputScope"),
         16 => Some(&"Literal"),
-        17 => Some(&"VarDecl"),
-        18 => Some(&"Variable"),
-        19 => Some(&"__Null"),
-        _ => None,
-    }
+        17 => Some(&"NonexistantFunction"),
+        18 => Some(&"OutOfScopeVar"),
+        19 => Some(&"UninferedExpr"),
+        20 => Some(&"VarDecl"),
+        21 => Some(&"Variable"),
+        22 => Some(&"__Null"),
+       _  => None
+   }
 }
 pub fn relid2cname(rid: RelId) -> Option<&'static ::std::ffi::CStr> {
     RELIDMAPC.get(&rid).copied()
-}
-/// A map of `RelId`s to their name as an `&'static str`
+}   /// A map of `RelId`s to their name as an `&'static str`
 pub static RELIDMAP: ::once_cell::sync::Lazy<::fnv::FnvHashMap<Relations, &'static str>> =
     ::once_cell::sync::Lazy::new(|| {
-        let mut map =
-            ::fnv::FnvHashMap::with_capacity_and_hasher(20, ::fnv::FnvBuildHasher::default());
+        let mut map = ::fnv::FnvHashMap::with_capacity_and_hasher(23, ::fnv::FnvBuildHasher::default());
         map.insert(Relations::Application, "Application");
         map.insert(Relations::ApplicationArg, "ApplicationArg");
         map.insert(Relations::ChildScope, "ChildScope");
@@ -751,123 +686,47 @@ pub static RELIDMAP: ::once_cell::sync::Lazy<::fnv::FnvHashMap<Relations, &'stat
         map.insert(Relations::INPUT_VarDecl, "INPUT_VarDecl");
         map.insert(Relations::InputScope, "InputScope");
         map.insert(Relations::Literal, "Literal");
+        map.insert(Relations::NonexistantFunction, "NonexistantFunction");
+        map.insert(Relations::OutOfScopeVar, "OutOfScopeVar");
+        map.insert(Relations::UninferedExpr, "UninferedExpr");
         map.insert(Relations::VarDecl, "VarDecl");
         map.insert(Relations::Variable, "Variable");
         map.insert(Relations::__Null, "__Null");
         map
     });
-/// A map of `RelId`s to their name as an `&'static CStr`
+    /// A map of `RelId`s to their name as an `&'static CStr`
 pub static RELIDMAPC: ::once_cell::sync::Lazy<::fnv::FnvHashMap<RelId, &'static ::std::ffi::CStr>> =
     ::once_cell::sync::Lazy::new(|| {
-        let mut map =
-            ::fnv::FnvHashMap::with_capacity_and_hasher(20, ::fnv::FnvBuildHasher::default());
-        map.insert(
-            0,
-            ::std::ffi::CStr::from_bytes_with_nul(b"Application\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            1,
-            ::std::ffi::CStr::from_bytes_with_nul(b"ApplicationArg\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            2,
-            ::std::ffi::CStr::from_bytes_with_nul(b"ChildScope\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            3,
-            ::std::ffi::CStr::from_bytes_with_nul(b"Expression\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            4,
-            ::std::ffi::CStr::from_bytes_with_nul(b"ExpressionType\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            5,
-            ::std::ffi::CStr::from_bytes_with_nul(b"FuncArg\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            6,
-            ::std::ffi::CStr::from_bytes_with_nul(b"Function\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            7,
-            ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_Application\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            8,
-            ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_ApplicationArg\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            9,
-            ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_Expression\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            10,
-            ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_FuncArg\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            11,
-            ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_Function\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            12,
-            ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_InputScope\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            13,
-            ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_Literal\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            14,
-            ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_VarDecl\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            15,
-            ::std::ffi::CStr::from_bytes_with_nul(b"InputScope\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            16,
-            ::std::ffi::CStr::from_bytes_with_nul(b"Literal\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            17,
-            ::std::ffi::CStr::from_bytes_with_nul(b"VarDecl\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            18,
-            ::std::ffi::CStr::from_bytes_with_nul(b"Variable\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
-        map.insert(
-            19,
-            ::std::ffi::CStr::from_bytes_with_nul(b"__Null\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
+        let mut map = ::fnv::FnvHashMap::with_capacity_and_hasher(23, ::fnv::FnvBuildHasher::default());
+        map.insert(0, ::std::ffi::CStr::from_bytes_with_nul(b"Application\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(1, ::std::ffi::CStr::from_bytes_with_nul(b"ApplicationArg\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(2, ::std::ffi::CStr::from_bytes_with_nul(b"ChildScope\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(3, ::std::ffi::CStr::from_bytes_with_nul(b"Expression\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(4, ::std::ffi::CStr::from_bytes_with_nul(b"ExpressionType\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(5, ::std::ffi::CStr::from_bytes_with_nul(b"FuncArg\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(6, ::std::ffi::CStr::from_bytes_with_nul(b"Function\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(7, ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_Application\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(8, ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_ApplicationArg\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(9, ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_Expression\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(10, ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_FuncArg\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(11, ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_Function\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(12, ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_InputScope\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(13, ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_Literal\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(14, ::std::ffi::CStr::from_bytes_with_nul(b"INPUT_VarDecl\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(15, ::std::ffi::CStr::from_bytes_with_nul(b"InputScope\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(16, ::std::ffi::CStr::from_bytes_with_nul(b"Literal\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(17, ::std::ffi::CStr::from_bytes_with_nul(b"NonexistantFunction\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(18, ::std::ffi::CStr::from_bytes_with_nul(b"OutOfScopeVar\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(19, ::std::ffi::CStr::from_bytes_with_nul(b"UninferedExpr\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(20, ::std::ffi::CStr::from_bytes_with_nul(b"VarDecl\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(21, ::std::ffi::CStr::from_bytes_with_nul(b"Variable\0").expect("Unreachable: A null byte was specifically inserted"));
+        map.insert(22, ::std::ffi::CStr::from_bytes_with_nul(b"__Null\0").expect("Unreachable: A null byte was specifically inserted"));
         map
     });
-/// A map of input `Relations`s to their name as an `&'static str`
+    /// A map of input `Relations`s to their name as an `&'static str`
 pub static INPUT_RELIDMAP: ::once_cell::sync::Lazy<::fnv::FnvHashMap<Relations, &'static str>> =
     ::once_cell::sync::Lazy::new(|| {
-        let mut map =
-            ::fnv::FnvHashMap::with_capacity_and_hasher(8, ::fnv::FnvBuildHasher::default());
+        let mut map = ::fnv::FnvHashMap::with_capacity_and_hasher(8, ::fnv::FnvBuildHasher::default());
         map.insert(Relations::Application, "Application");
         map.insert(Relations::ApplicationArg, "ApplicationArg");
         map.insert(Relations::Expression, "Expression");
@@ -878,11 +737,10 @@ pub static INPUT_RELIDMAP: ::once_cell::sync::Lazy<::fnv::FnvHashMap<Relations, 
         map.insert(Relations::VarDecl, "VarDecl");
         map
     });
-/// A map of output `Relations`s to their name as an `&'static str`
+    /// A map of output `Relations`s to their name as an `&'static str`
 pub static OUTPUT_RELIDMAP: ::once_cell::sync::Lazy<::fnv::FnvHashMap<Relations, &'static str>> =
     ::once_cell::sync::Lazy::new(|| {
-        let mut map =
-            ::fnv::FnvHashMap::with_capacity_and_hasher(11, ::fnv::FnvBuildHasher::default());
+        let mut map = ::fnv::FnvHashMap::with_capacity_and_hasher(14, ::fnv::FnvBuildHasher::default());
         map.insert(Relations::ChildScope, "ChildScope");
         map.insert(Relations::ExpressionType, "ExpressionType");
         map.insert(Relations::INPUT_Application, "INPUT_Application");
@@ -893,143 +751,143 @@ pub static OUTPUT_RELIDMAP: ::once_cell::sync::Lazy<::fnv::FnvHashMap<Relations,
         map.insert(Relations::INPUT_InputScope, "INPUT_InputScope");
         map.insert(Relations::INPUT_Literal, "INPUT_Literal");
         map.insert(Relations::INPUT_VarDecl, "INPUT_VarDecl");
+        map.insert(Relations::NonexistantFunction, "NonexistantFunction");
+        map.insert(Relations::OutOfScopeVar, "OutOfScopeVar");
+        map.insert(Relations::UninferedExpr, "UninferedExpr");
         map.insert(Relations::Variable, "Variable");
         map
     });
 impl TryFrom<&str> for Indexes {
     type Error = ();
-    fn try_from(iname: &str) -> ::std::result::Result<Self, Self::Error> {
-        match iname {
-            "__Null_by_none" => Ok(Indexes::__Null_by_none),
-            _ => Err(()),
-        }
+    fn try_from(iname: &str) -> ::std::result::Result<Self, ()> {
+         match iname {
+        "__Null_by_none" => Ok(Indexes::__Null_by_none),
+             _  => Err(())
+         }
     }
 }
 impl TryFrom<IdxId> for Indexes {
     type Error = ();
-    fn try_from(iid: IdxId) -> ::core::result::Result<Self, Self::Error> {
-        match iid {
-            0 => Ok(Indexes::__Null_by_none),
-            _ => Err(()),
-        }
+    fn try_from(iid: IdxId) -> ::core::result::Result<Self, ()> {
+         match iid {
+        0 => Ok(Indexes::__Null_by_none),
+             _  => Err(())
+         }
     }
 }
 pub fn indexid2name(iid: IdxId) -> Option<&'static str> {
-    match iid {
+   match iid {
         0 => Some(&"__Null_by_none"),
-        _ => None,
-    }
+       _  => None
+   }
 }
 pub fn indexid2cname(iid: IdxId) -> Option<&'static ::std::ffi::CStr> {
     IDXIDMAPC.get(&iid).copied()
-}
-/// A map of `Indexes` to their name as an `&'static str`
+}   /// A map of `Indexes` to their name as an `&'static str`
 pub static IDXIDMAP: ::once_cell::sync::Lazy<::fnv::FnvHashMap<Indexes, &'static str>> =
     ::once_cell::sync::Lazy::new(|| {
-        let mut map =
-            ::fnv::FnvHashMap::with_capacity_and_hasher(1, ::fnv::FnvBuildHasher::default());
+        let mut map = ::fnv::FnvHashMap::with_capacity_and_hasher(1, ::fnv::FnvBuildHasher::default());
         map.insert(Indexes::__Null_by_none, "__Null_by_none");
         map
     });
-/// A map of `IdxId`s to their name as an `&'static CStr`
+    /// A map of `IdxId`s to their name as an `&'static CStr`
 pub static IDXIDMAPC: ::once_cell::sync::Lazy<::fnv::FnvHashMap<IdxId, &'static ::std::ffi::CStr>> =
     ::once_cell::sync::Lazy::new(|| {
-        let mut map =
-            ::fnv::FnvHashMap::with_capacity_and_hasher(1, ::fnv::FnvBuildHasher::default());
-        map.insert(
-            0,
-            ::std::ffi::CStr::from_bytes_with_nul(b"__Null_by_none\0")
-                .expect("Unreachable: A null byte was specifically inserted"),
-        );
+        let mut map = ::fnv::FnvHashMap::with_capacity_and_hasher(1, ::fnv::FnvBuildHasher::default());
+        map.insert(0, ::std::ffi::CStr::from_bytes_with_nul(b"__Null_by_none\0").expect("Unreachable: A null byte was specifically inserted"));
         map
     });
-pub fn relval_from_record(
-    rel: Relations,
-    _rec: &differential_datalog::record::Record,
-) -> ::std::result::Result<DDValue, String> {
+pub fn relval_from_record(rel: Relations, _rec: &differential_datalog::record::Record) -> ::std::result::Result<DDValue, String> {
     match rel {
         Relations::Application => {
             Ok(Value::Application(<::types::Application>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::ApplicationArg => {
             Ok(Value::ApplicationArg(<::types::ApplicationArg>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::ChildScope => {
             Ok(Value::ChildScope(<::types::ChildScope>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::Expression => {
             Ok(Value::Expression(<::types::Expression>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::ExpressionType => {
             Ok(Value::ExpressionType(<::types::ExpressionType>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::FuncArg => {
             Ok(Value::FuncArg(<::types::FuncArg>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::Function => {
             Ok(Value::Function(<::types::Function>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::INPUT_Application => {
             Ok(Value::Application(<::types::Application>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::INPUT_ApplicationArg => {
             Ok(Value::ApplicationArg(<::types::ApplicationArg>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::INPUT_Expression => {
             Ok(Value::Expression(<::types::Expression>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::INPUT_FuncArg => {
             Ok(Value::FuncArg(<::types::FuncArg>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::INPUT_Function => {
             Ok(Value::Function(<::types::Function>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::INPUT_InputScope => {
             Ok(Value::InputScope(<::types::InputScope>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::INPUT_Literal => {
             Ok(Value::Literal(<::types::Literal>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::INPUT_VarDecl => {
             Ok(Value::VarDecl(<::types::VarDecl>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::InputScope => {
             Ok(Value::InputScope(<::types::InputScope>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::Literal => {
             Ok(Value::Literal(<::types::Literal>::from_record(_rec)?).into_ddvalue())
-        }
+        },
+        Relations::NonexistantFunction => {
+            Ok(Value::NonexistantFunction(<::types::NonexistantFunction>::from_record(_rec)?).into_ddvalue())
+        },
+        Relations::OutOfScopeVar => {
+            Ok(Value::OutOfScopeVar(<::types::OutOfScopeVar>::from_record(_rec)?).into_ddvalue())
+        },
+        Relations::UninferedExpr => {
+            Ok(Value::UninferedExpr(<::types::UninferedExpr>::from_record(_rec)?).into_ddvalue())
+        },
         Relations::VarDecl => {
             Ok(Value::VarDecl(<::types::VarDecl>::from_record(_rec)?).into_ddvalue())
-        }
+        },
         Relations::Variable => {
             Ok(Value::Variable(<::types::Variable>::from_record(_rec)?).into_ddvalue())
+        },
+        Relations::__Null => {
+            Ok(Value::__Tuple0__(<()>::from_record(_rec)?).into_ddvalue())
         }
-        Relations::__Null => Ok(Value::__Tuple0__(<()>::from_record(_rec)?).into_ddvalue()),
     }
 }
-pub fn relkey_from_record(
-    rel: Relations,
-    _rec: &differential_datalog::record::Record,
-) -> ::std::result::Result<DDValue, String> {
+pub fn relkey_from_record(rel: Relations, _rec: &differential_datalog::record::Record) -> ::std::result::Result<DDValue, String> {
     match rel {
-        _ => Err(format!("relation {:?} does not have a primary key", rel)),
+        _ => Err(format!("relation {:?} does not have a primary key", rel))
     }
 }
-pub fn idxkey_from_record(
-    idx: Indexes,
-    _rec: &differential_datalog::record::Record,
-) -> ::std::result::Result<DDValue, String> {
+pub fn idxkey_from_record(idx: Indexes, _rec: &differential_datalog::record::Record) -> ::std::result::Result<DDValue, String> {
     match idx {
-        Indexes::__Null_by_none => Ok(Value::__Tuple0__(<()>::from_record(_rec)?).into_ddvalue()),
+        Indexes::__Null_by_none => {
+            Ok(Value::__Tuple0__(<()>::from_record(_rec)?).into_ddvalue())
+        }
     }
 }
 pub fn indexes2arrid(idx: Indexes) -> ArrId {
     match idx {
-        Indexes::__Null_by_none => (19, 0),
+        Indexes::__Null_by_none => ( 22, 0),
     }
 }
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy,Clone,Debug,PartialEq,Eq,Hash)]
 pub enum Relations {
     Application = 0,
     ApplicationArg = 1,
@@ -1048,11 +906,14 @@ pub enum Relations {
     INPUT_VarDecl = 14,
     InputScope = 15,
     Literal = 16,
-    VarDecl = 17,
-    Variable = 18,
-    __Null = 19,
+    NonexistantFunction = 17,
+    OutOfScopeVar = 18,
+    UninferedExpr = 19,
+    VarDecl = 20,
+    Variable = 21,
+    __Null = 22
 }
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy,Clone,Debug,PartialEq,Eq,Hash)]
 pub enum Indexes {
-    __Null_by_none = 0,
+    __Null_by_none = 0
 }

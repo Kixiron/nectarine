@@ -2,7 +2,13 @@
 //! CLI), parsing them with cmd_parser crate, executing commands, and tracking database state in a
 //! map.
 
-#![allow(dead_code, non_snake_case)]
+#![allow(
+    dead_code,
+    non_snake_case,
+    clippy::match_like_matches_macro,
+    //match_like_matches_macro not supported in older versions of clippy
+    clippy::unknown_clippy_lints
+)]
 
 use std::convert::TryFrom;
 use std::io::stdout;
@@ -14,6 +20,7 @@ use time::Instant;
 
 use api::{updcmd2upd, HDDlog};
 use cmd_parser::*;
+use typecheck_ddlog::*;
 use differential_datalog::ddval::*;
 use differential_datalog::program::*;
 use differential_datalog::record::*;
@@ -21,7 +28,6 @@ use differential_datalog::DDlog;
 use differential_datalog::DeltaMap;
 use num_traits::cast::ToPrimitive;
 use rustop::opts;
-use typecheck_ddlog::*;
 use types::log_set_default_callback;
 
 #[cfg(feature = "profile")]

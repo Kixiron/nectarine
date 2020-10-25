@@ -116,6 +116,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok(())
     })?;
 
+    for var in ddlog.out_of_scope_vars.iter() {
+        println!("error: Could not find a variable named {:?}", var.variable);
+    }
+
     Ok(())
 }
 
@@ -180,13 +184,13 @@ type DdlogResult<T> = Result<T, String>;
 
 struct Datalog {
     datalog: Rc<RefCell<DatalogInner>>,
+    out_of_scope_vars: Vec<OutOfScopeVar>,
 }
 
 impl Datalog {
     pub fn new() -> DdlogResult<Self> {
-        let (hddlog, _init_state) = HDDlog::run(2, false, |_: usize, _: &Record, _: isize| {})?;
-
-        Ok(Self {
+        let (hddlog, init_state) = HDDlog::run(2, false, |_: usize, _: &Record, _: isize| {})?;
+        let mut this = Self {
             datalog: Rc::new(RefCell::new(DatalogInner {
                 hddlog,
                 updates: Vec::with_capacity(100),
@@ -194,7 +198,11 @@ impl Datalog {
                 function_id: 0,
                 expression_id: 0,
             })),
-        })
+            out_of_scope_vars: Vec::new(),
+        };
+        this.update(init_state);
+
+        Ok(this)
     }
 
     fn transaction<F>(&mut self, transaction: F) -> DdlogResult<()>
@@ -203,9 +211,32 @@ impl Datalog {
     {
         let mut trans = DatalogTransaction::new(self.datalog.clone())?;
         transaction(&mut trans)?;
-        trans.commit()?;
+        let delta = trans.commit()?;
+        self.update(delta);
 
         Ok(())
+    }
+
+    fn update(&mut self, mut delta: DeltaMap<DDValue>) {
+        let out_of_scope_vars = delta.clear_rel(Relations::OutOfScopeVar as RelId);
+        for (var, weight) in out_of_scope_vars {
+            let var = unsafe { Value::OutOfScopeVar::from_ddvalue(var).0 };
+
+            match weight {
+                1 => self.out_of_scope_vars.push(var),
+                -1 => {
+                    let idx = self
+                        .out_of_scope_vars
+                        .iter()
+                        .position(|v| v == &var)
+                        .unwrap();
+
+                    self.out_of_scope_vars.remove(idx);
+                }
+
+                weight => panic!("invalid weight: {}", weight),
+            }
+        }
     }
 }
 
@@ -275,7 +306,7 @@ impl<'ddlog> DatalogTransaction<'ddlog> {
         }
     }
 
-    pub fn commit(self) -> DdlogResult<()> {
+    pub fn commit(self) -> DdlogResult<DeltaMap<DDValue>> {
         let mut datalog = self.datalog.borrow_mut();
 
         let updates = mem::take(&mut datalog.updates);
@@ -286,7 +317,7 @@ impl<'ddlog> DatalogTransaction<'ddlog> {
         println!("State after transaction");
         dump_delta(&delta);
 
-        Ok(())
+        Ok(delta)
     }
 }
 

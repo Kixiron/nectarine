@@ -84,6 +84,10 @@ for arg in "$@"; do
         check_undeclared "$no_check" "--no-check"
         no_check="true"
 
+    elif [ "$arg" = "--no-fmt" ]; then
+        check_undeclared "$no_rustfmt" "--no-fmt"
+        no_rustfmt="true"
+
     elif [ "$arg" = "--help" ] || [ "$arg" = "-h" ]; then
         printf "USAGE:\n"
         printf "    ./ddlog.sh [SUBCOMMAND] [FLAGS]\n"
@@ -93,6 +97,7 @@ for arg in "$@"; do
         printf "        --no-check          Don't run 'cargo check' on generated code\n"
         printf "        --debug             Enable debug mode (causes ddlog to dump internal tables)\n"
         printf "        --no-color          Disable terminal coloring\n"
+        printf "        --no-fmt            Don't run rustfmt"
         # TODO: Allow customizing these
         # printf "    -o, --output-dir        Set the output dir, defaults to $DDLOG_OUTPUT_DIR\n"
         # printf "    -i, --input-file        Set the input file, defaults to $DDLOG_INPUT_FILE\n"
@@ -142,13 +147,16 @@ else
     printf "ddlog... "
 fi
 
+if ! [ "$no_rustfmt" = "true" ]; then
+    extra_args="$extra_args --run-rustfmt"
+fi
+
 ddlog -i $DDLOG_INPUT_FILE \
       -L $DDLOG_LIBRARY_DIR \
       --action $compile_action \
       --output-dir=$DDLOG_OUTPUT_DIR \
       --omit-profile \
       --omit-workspace \
-      --run-rustfmt \
       $extra_args
 
 exit_code=$?
